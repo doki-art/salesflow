@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Salesflow — Simple, transparent pricing</title>
+<title>Salesflow — Pricing</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -17,172 +17,33 @@
   --blue-light: #eef1fd;
   --blue-mid: #d9e0fb;
   --blue-shadow: rgba(61, 99, 240, 0.28);
-  --yellow: #f5c200;
-  --yellow-dark: #d9ac00;
   --text: #111827;
   --text-2: #4b5563;
   --text-3: #9ca3af;
   --green: #16a34a;
   --red-badge: #ef4444;
   --font: 'Montserrat', sans-serif;
-  --shadow: 0 4px 16px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04);
-  --shadow-blue: 0 6px 20px rgba(61,99,240,0.28);
 }
 
 body {
   font-family: var(--font);
   background: var(--bg);
   color: var(--text);
-  -webkit-font-smoothing: antialiased;
   min-height: 100vh;
-}
-
-/* ── TOP NAV (not sticky) ── */
-.topnav {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  height: 56px;
   display: flex;
-  align-items: center;
-  padding: 0 40px;
-  gap: 32px;
-}
-
-.topnav__logo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 17px;
-  font-weight: 900;
-  color: var(--text);
-  text-decoration: none;
-  letter-spacing: -0.3px;
-}
-
-.topnav__logo-icon {
-  width: 28px;
-  height: 28px;
-  background: var(--blue);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  padding: 48px 24px 80px;
+  -webkit-font-smoothing: antialiased;
 }
 
-.topnav__logo-icon svg {
-  width: 16px;
-  height: 16px;
-  fill: white;
-}
-
-.topnav__nav {
+.pricing-root {
+  width: 100%;
+  max-width: 1100px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 24px;
-  margin-left: 8px;
-  flex: 1;
-}
-
-.topnav__nav a {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-2);
-  text-decoration: none;
-  transition: color 0.15s;
-}
-.topnav__nav a:hover { color: var(--text); }
-
-.topnav__actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-left: auto;
-}
-
-.btn-ghost {
-  padding: 8px 18px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: transparent;
-  font-family: var(--font);
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-2);
-  cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
-}
-.btn-ghost:hover { background: var(--bg); border-color: #c5cad3; }
-
-.btn-outline {
-  padding: 8px 18px;
-  border: 1.5px solid var(--blue);
-  border-radius: 8px;
-  background: transparent;
-  font-family: var(--font);
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--blue);
-  cursor: pointer;
-  transition: background 0.15s;
-}
-.btn-outline:hover { background: var(--blue-light); }
-
-.btn-primary {
-  padding: 8px 18px;
-  border: none;
-  border-radius: 8px;
-  background: var(--yellow);
-  font-family: var(--font);
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--text);
-  cursor: pointer;
-  transition: background 0.15s;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-.btn-primary:hover { background: var(--yellow-dark); }
-
-/* ── HERO ── */
-.hero {
-  text-align: center;
-  padding: 52px 24px 36px;
-}
-
-.hero__title {
-  font-size: 44px;
-  font-weight: 900;
-  color: var(--text);
-  letter-spacing: -1.5px;
-  line-height: 1.1;
-  margin-bottom: 12px;
-}
-
-.hero__title span {
-  color: var(--blue);
-}
-
-.hero__sub {
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--text-3);
-  max-width: 560px;
-  margin: 0 auto;
-  line-height: 1.6;
-}
-
-/* ── STICKY BILLING TOGGLE WRAPPER ── */
-.sticky-toggle-wrapper {
-  position: sticky;
-  top: 0;
-  z-index: 200;
-  display: flex;
-  justify-content: center;
-  padding: 14px 0 10px;
-  background: var(--bg);
-  /* subtle bottom fade */
-  box-shadow: 0 4px 12px rgba(238,240,244,0.9);
+  gap: 28px;
 }
 
 /* ── BILLING TOGGLE ── */
@@ -264,27 +125,20 @@ body {
   white-space: nowrap;
 }
 
-/* ── MAIN CONTENT AREA ── */
-.pricing-section {
-  padding: 18px 40px 0;
-  max-width: 1180px;
-  margin: 0 auto;
-}
-
 /* ── CALCULATOR BOX ── */
 .calc-box {
   width: 100%;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 20px;
-  box-shadow: var(--shadow);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04);
   padding: 28px 32px 24px;
   display: flex;
   flex-direction: column;
   gap: 20px;
-  margin-bottom: 20px;
 }
 
+/* seats row */
 .seats-row {
   display: flex;
   align-items: center;
@@ -301,6 +155,7 @@ body {
 .seats-stepper {
   display: flex;
   align-items: center;
+  gap: 0;
 }
 .seats-stepper__btn {
   width: 38px;
@@ -441,7 +296,6 @@ body {
   grid-template-columns: repeat(5, 1fr);
   gap: 14px;
   width: 100%;
-  margin-bottom: 52px;
 }
 
 .plan-card {
@@ -464,15 +318,6 @@ body {
     0px 0px 0px 3px rgba(61,99,240,0.1),
     0px 12px 40px 0px rgba(0,0,0,0.09),
     0px 4px 12px 0px rgba(0,0,0,0.05) !important;
-}
-.plan-card--disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
-}
-.plan-card--disabled .info-icon {
-  pointer-events: all;
-  cursor: help;
 }
 
 .plan-card__selected-badge {
@@ -511,8 +356,8 @@ body {
   text-transform: uppercase;
   color: var(--text);
 }
-.plan-card--disabled .plan-card__name { color: var(--text-3); }
 
+/* info icon */
 .info-icon {
   display: inline-flex;
   align-items: center;
@@ -561,6 +406,7 @@ body {
 .plan-card__price {
   display: flex;
   align-items: baseline;
+  gap: 0;
   margin-bottom: 10px;
 }
 .plan-card__from {
@@ -577,7 +423,6 @@ body {
   line-height: 30px;
   transition: color 0.2s;
 }
-.plan-card--disabled .plan-card__amount { color: var(--text-3); }
 .plan-card__period {
   font-size: 11px;
   font-weight: 600;
@@ -630,138 +475,7 @@ body {
 .plan-card__btn:hover { background: var(--bg); }
 .plan-card--selected .plan-card__btn:hover { background: #2e52d6; border-color: #2e52d6; }
 
-/* ── COMPARE FEATURES SECTION ── */
-.features-section {
-  background: var(--bg);
-  padding: 0 40px 80px;
-}
-
-.section-header {
-  text-align: center;
-  padding: 56px 0 32px;
-}
-
-.section-header h2 {
-  font-size: 32px;
-  font-weight: 900;
-  color: var(--text);
-  letter-spacing: -0.8px;
-  margin-bottom: 10px;
-}
-
-.section-header p {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-3);
-}
-
-/* ── FEATURE TABLE ── */
-.feature-table-wrap {
-  max-width: 1100px;
-  margin: 0 auto;
-}
-
-.feature-table {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  overflow: visible;
-  box-shadow: var(--shadow);
-  position: relative;
-}
-
-.fth, .frow, .frow-all, .fgroup, .min-seats-row, .table-footer {
-  display: grid;
-  grid-template-columns: 2.2fr repeat(5, 1fr);
-}
-
-.fth-sticky {
-  position: sticky;
-  top: 70px; /* below the billing toggle */
-  z-index: 100;
-  background: var(--surface);
-  border-bottom: 1.5px solid var(--border);
-  border-top-left-radius: 16px;
-  border-top-right-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  overflow: visible;
-}
-
-/* Clip only the background/corners, not tooltips */
-.fth-sticky::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-top-left-radius: 16px;
-  border-top-right-radius: 16px;
-  background: var(--surface);
-  z-index: -1;
-}
-
-.min-seats-row {
-  border-top: none;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface);
-}
-
-.fth-cell {
-  padding: 16px 10px 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 5px;
-  background: var(--surface);
-}
-.fth-cell.fth-label {
-  align-items: flex-start;
-  justify-content: flex-end;
-  padding: 16px 20px 10px;
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--text-3);
-}
-
-.plan-badge {
-  font-size: 12px;
-  font-weight: 800;
-  padding: 4px 14px;
-  border-radius: 20px;
-  background: var(--bg);
-  color: var(--text-2);
-  white-space: nowrap;
-}
-
-.price-line {
-  display: flex;
-  align-items: baseline;
-  gap: 3px;
-}
-.price-val {
-  font-size: 15px;
-  font-weight: 900;
-  color: var(--text);
-  letter-spacing: -0.5px;
-}
-.price-unit {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-3);
-}
-
-/* Sales caption for Agency / Enterprise on non-monthly periods */
-.sales-caption {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--blue);
-  text-align: center;
-  line-height: 1.3;
-  white-space: normal;
-}
-
-/* Sales text in plan cards */
+/* Sales text — restricted plans on 6mo/12mo */
 .plan-card__sales-text {
   font-size: 12px;
   font-weight: 700;
@@ -774,255 +488,38 @@ body {
 }
 
 
-.ms-label {
-  padding: 8px 20px;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-2);
-  display: flex;
-  align-items: center;
-}
-.ms-val {
-  padding: 8px 10px;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.fgroup {
-  border-top: 1px solid var(--border);
-  background: var(--bg);
-}
-.fgroup-label {
-  grid-column: 1 / -1;
-  padding: 8px 20px;
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 1.1px;
-  color: var(--text-3);
-}
-
-.frow-all {
-  border-top: 1px solid var(--border);
-  transition: background 0.12s;
-}
-.frow-all:hover { background: #fafbff; }
-.fname {
-  padding: 14px 20px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 3px;
-}
-.fname small { font-size: 11px; color: var(--text-3); font-weight: 500; }
-.fall-span {
-  grid-column: 2 / -1;
-  padding: 14px 20px;
-  font-size: 12.5px;
-  color: var(--text-2);
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.all-badge {
-  font-size: 10px;
-  background: var(--blue-light);
-  color: var(--blue);
-  border: 1px solid var(--blue-mid);
-  padding: 3px 9px;
-  border-radius: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  flex-shrink: 0;
-}
-
-.frow {
-  border-top: 1px solid var(--border);
-  transition: background 0.12s;
-}
-.frow:hover { background: #fafbff; }
-.fval {
-  padding: 14px 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  color: var(--text-2);
-  font-weight: 600;
-  text-align: center;
-}
-.fval-text {
-  font-size: 11.5px;
-  color: var(--text-3);
-  font-weight: 600;
-}
-.check { color: var(--green); font-size: 18px; }
-.cross { color: var(--red-badge); font-size: 15px; }
-
-.table-footer {
-  border-top: 1.5px solid var(--border);
-  background: var(--bg);
-  border-bottom-left-radius: 16px;
-  border-bottom-right-radius: 16px;
-  padding: 16px 0;
-}
-.tf-note {
-  padding: 0 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 3px;
-}
-.tf-note-top {
-  font-size: 11px;
-  font-weight: 800;
-  color: var(--text-2);
-  text-transform: uppercase;
-  letter-spacing: 0.7px;
-}
-.tf-note-sub {
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--text-3);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-.tf-cta {
-  padding: 0 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.tf-btn {
-  width: 100%;
-  padding: 11px 6px;
-  background: var(--blue);
-  color: #fff;
-  border: none;
-  border-radius: 9px;
-  font-family: var(--font);
-  font-size: 11px;
-  font-weight: 800;
-  cursor: pointer;
-  transition: background 0.15s;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  box-shadow: var(--shadow-blue);
-}
-.tf-btn:hover { background: #2d50d6; }
-.tf-btn.yellow {
-  background: var(--yellow);
-  color: var(--text);
-  box-shadow: 0 4px 14px rgba(245,194,0,0.3);
-}
-.tf-btn.yellow:hover { background: var(--yellow-dark); }
-
-/* ── BOTTOM CTA BAR ── */
-.bottom-cta {
-  background: #111827;
-  padding: 24px 40px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.bottom-cta__text h3 {
-  font-size: 16px;
-  font-weight: 900;
-  color: #fff;
-  letter-spacing: -0.3px;
-  margin-bottom: 4px;
-}
-
-.bottom-cta__text p {
-  font-size: 13px;
-  font-weight: 500;
-  color: #9ca3af;
-}
-
-.bottom-cta__btn {
-  padding: 12px 24px;
-  background: var(--yellow);
-  border: none;
-  border-radius: 9px;
-  font-family: var(--font);
-  font-size: 13px;
-  font-weight: 900;
-  color: var(--text);
-  cursor: pointer;
-  transition: background 0.15s;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.bottom-cta__btn:hover { background: var(--yellow-dark); }
 </style>
 </head>
 <body>
 
-<!-- TOP NAV (not sticky) -->
-<nav class="topnav">
-  <a href="#" class="topnav__logo">
-    <div class="topnav__logo-icon">
-      <svg viewBox="0 0 16 16"><path d="M13 2H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1zm-1 6H8v4H6V8H2V6h4V2h2v4h4v2z"/></svg>
-    </div>
-    Salesflow
-  </a>
-  <nav class="topnav__nav">
-    <a href="#">Product</a>
-    <a href="#">Solutions</a>
-    <a href="#">Pricing</a>
-    <a href="#">Resources</a>
-  </nav>
-  <div class="topnav__actions">
-    <button class="btn-ghost">Log in</button>
-    <button class="btn-outline">Book a Demo</button>
-    <button class="btn-primary">Try for Free »</button>
-  </div>
-</nav>
+<div class="pricing-root">
 
-<!-- HERO -->
-<div class="hero">
-  <h1 class="hero__title">Simple, <span>transparent</span> pricing</h1>
-  <p class="hero__sub">The bigger your team, the less you pay per seat.<br>Start free — no credit card required.</p>
-</div>
-
-<!-- STICKY BILLING TOGGLE -->
-<div class="sticky-toggle-wrapper">
+  <!-- BILLING TOGGLE -->
   <div class="billing-toggle" id="billing-toggle" role="radiogroup" aria-label="Billing period">
     <div class="billing-toggle__track" id="billing-track"></div>
-    <div class="billing-toggle__btn billing-toggle__btn--monthly" role="radio" data-period="monthly" tabindex="0">
+
+    <div class="billing-toggle__btn billing-toggle__btn--monthly"
+         role="radio" data-period="monthly" tabindex="0">
       <span class="billing-toggle__label">Monthly</span>
     </div>
-    <div class="billing-toggle__btn billing-toggle__btn--6months" role="radio" data-period="6months" tabindex="-1">
+
+    <div class="billing-toggle__btn billing-toggle__btn--6months"
+         role="radio" data-period="6months" tabindex="-1">
       <span class="billing-toggle__label">6 Months</span>
       <div class="billing-toggle__badge"><span>−15%</span></div>
     </div>
-    <div class="billing-toggle__btn billing-toggle__btn--12months" role="radio" data-period="12months" tabindex="-1">
+
+    <div class="billing-toggle__btn billing-toggle__btn--12months"
+         role="radio" data-period="12months" tabindex="-1">
       <span class="billing-toggle__label">12 Months</span>
       <div class="billing-toggle__badge"><span>−30%</span></div>
     </div>
   </div>
-</div>
-
-<!-- PRICING SECTION -->
-<div class="pricing-section">
 
   <!-- CALCULATOR BOX -->
   <div class="calc-box">
+
+    <!-- Seats row -->
     <div class="seats-row">
       <span class="seats-label">How many seats do you need?</span>
       <div class="seats-stepper">
@@ -1031,194 +528,15 @@ body {
         <button class="seats-stepper__btn" id="btn-plus" aria-label="Increase seats">+</button>
       </div>
     </div>
+
+    <!-- Banner -->
     <div class="banner" id="banner"></div>
+
   </div>
 
   <!-- PLAN CARDS -->
   <div class="plan-cards" id="plan-cards"></div>
 
-</div>
-
-<!-- COMPARE FEATURES -->
-<div class="features-section">
-  <div class="section-header">
-    <h2>Compare features</h2>
-    <p>Everything you need to connect, engage, and convert prospects into customers.</p>
-  </div>
-
-  <div class="feature-table-wrap">
-    <div class="feature-table">
-
-      <!-- Sticky header -->
-      <div class="fth-sticky">
-        <div class="fth">
-          <div class="fth-cell fth-label">Feature</div>
-          <div class="fth-cell">
-            <span class="plan-badge">Basic</span>
-            <div class="price-line">
-              <span class="price-val" id="ft-price-0">$99</span>
-              <span class="price-unit">/seat</span>
-            </div>
-          </div>
-          <div class="fth-cell">
-            <span class="plan-badge">Starter</span>
-            <div class="price-line">
-              <span class="price-val" id="ft-price-1">$70</span>
-              <span class="price-unit">/seat</span>
-            </div>
-          </div>
-          <div class="fth-cell">
-            <span class="plan-badge">Pro</span>
-            <div class="price-line">
-              <span class="price-val" id="ft-price-2">$39.95</span>
-              <span class="price-unit">/seat</span>
-            </div>
-          </div>
-          <div class="fth-cell">
-            <span class="plan-badge">Agency</span>
-            <div class="price-line">
-              <span class="price-val" id="ft-price-3">$29.98</span>
-              <span class="price-unit" id="ft-unit-3">/seat</span>
-              <span class="sales-caption" id="ft-sales-3" style="display:none;">Speak with our Sales team</span>
-            </div>
-          </div>
-          <div class="fth-cell">
-            <span class="plan-badge">Enterprise</span>
-            <div class="price-line">
-              <span class="price-val" id="ft-price-4">$24.99</span>
-              <span class="price-unit" id="ft-unit-4">/seat</span>
-              <span class="sales-caption" id="ft-sales-4" style="display:none;">Speak with our Sales team</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Min seats row -->
-      <div class="min-seats-row">
-        <div class="ms-label">Minimum seat number</div>
-        <div class="ms-val">1</div>
-        <div class="ms-val">5</div>
-        <div class="ms-val">20</div>
-        <div class="ms-val">50</div>
-        <div class="ms-val">100</div>
-      </div>
-
-      <!-- Included in all plans -->
-      <div class="fgroup"><div class="fgroup-label">Included in all plans</div></div>
-
-      <div class="frow-all">
-        <div class="fname">Multichannel</div>
-        <div class="fall-span"><span class="all-badge">All plans</span>LinkedIn, Email</div>
-      </div>
-      <div class="frow-all">
-        <div class="fname">Dynamic Outreach</div>
-        <div class="fall-span"><span class="all-badge">All plans</span>Multi-channel adaptive workflows</div>
-      </div>
-      <div class="frow-all">
-        <div class="fname">Unified Inbox</div>
-        <div class="fall-span"><span class="all-badge">All plans</span>LinkedIn, Sales Navigator</div>
-      </div>
-      <div class="frow-all">
-        <div class="fname">Inbox Management</div>
-        <div class="fall-span"><span class="all-badge">All plans</span>Reminders, Snooze, Scheduled send, Quick response templates, All filters</div>
-      </div>
-      <div class="frow-all">
-        <div class="fname">Campaign Intelligence and Analytics</div>
-        <div class="fall-span"><span class="all-badge">All plans</span>Overview, LinkedIn, Email</div>
-      </div>
-      <div class="frow-all">
-        <div class="fname">Native Integrations</div>
-        <div class="fall-span"><span class="all-badge">All plans</span>HubSpot, Sales Navigator, Zapier</div>
-      </div>
-      <div class="frow-all">
-        <div class="fname">Standard Email Support</div>
-        <div class="fall-span"><span class="all-badge">All plans</span></div>
-      </div>
-
-      <!-- Plan differentiators -->
-      <div class="fgroup"><div class="fgroup-label">Plan differentiators</div></div>
-
-      <div class="frow">
-        <div class="fname">Dedicated CSM + Priority Support <small>Direct access to our team</small></div>
-        <div class="fval"><span class="cross">✕</span></div>
-        <div class="fval"><span class="cross">✕</span></div>
-        <div class="fval"><span class="cross">✕</span></div>
-        <div class="fval"><span class="check">✓</span></div>
-        <div class="fval"><span class="check">✓</span></div>
-      </div>
-      <div class="frow">
-        <div class="fname">URL & Access Customisation <small>Whitelabel DNS record</small></div>
-        <div class="fval"><span class="cross">✕</span></div>
-        <div class="fval"><span class="cross">✕</span></div>
-        <div class="fval"><span class="cross">✕</span></div>
-        <div class="fval"><span class="check">✓</span></div>
-        <div class="fval"><span class="check">✓</span></div>
-      </div>
-      <div class="frow">
-        <div class="fname">UI Customisation <small>Whitelabel branding</small></div>
-        <div class="fval"><span class="cross">✕</span></div>
-        <div class="fval"><span class="cross">✕</span></div>
-        <div class="fval"><span class="check">✓</span></div>
-        <div class="fval"><span class="check">✓</span></div>
-        <div class="fval"><span class="check">✓</span></div>
-      </div>
-      <div class="frow">
-        <div class="fname">Whitelabel Domain (DNS)</div>
-        <div class="fval"><span class="cross">✕</span></div>
-        <div class="fval"><span class="cross">✕</span></div>
-        <div class="fval"><span class="check">✓</span></div>
-        <div class="fval"><span class="check">✓</span></div>
-        <div class="fval"><span class="check">✓</span></div>
-      </div>
-      <div class="frow">
-        <div class="fname">API Access</div>
-        <div class="fval"><span class="cross">✕</span></div>
-        <div class="fval"><span class="cross">✕</span></div>
-        <div class="fval"><span class="check">✓</span></div>
-        <div class="fval"><span class="check">✓</span></div>
-        <div class="fval"><span class="check">✓</span></div>
-      </div>
-      <div class="frow">
-        <div class="fname">Early Feature Access <small>Beta Program Access</small></div>
-        <div class="fval"><span class="cross">✕</span></div>
-        <div class="fval"><span class="cross">✕</span></div>
-        <div class="fval"><span class="check">✓</span></div>
-        <div class="fval"><span class="check">✓</span></div>
-        <div class="fval"><span class="check">✓</span></div>
-      </div>
-      <div class="frow">
-        <div class="fname">Seat management <small>How additional seats are added</small></div>
-        <div class="fval"><span class="fval-text">+1 at a time</span></div>
-        <div class="fval"><span class="fval-text">+1 at a time</span></div>
-        <div class="fval"><span class="fval-text">+1 at a time</span></div>
-        <div class="fval"><span class="fval-text">Batches of 5</span></div>
-        <div class="fval"><span class="fval-text">Batches of 10</span></div>
-      </div>
-
-      <!-- Footer -->
-      <div class="table-footer">
-        <div class="tf-note">
-          <span class="tf-note-top">7-day free trial</span>
-          <span class="tf-note-sub">No card required</span>
-        </div>
-        <div class="tf-cta"><button class="tf-btn yellow">Try for free</button></div>
-        <div class="tf-cta"><button class="tf-btn">Book a demo</button></div>
-        <div class="tf-cta"><button class="tf-btn">Book a demo</button></div>
-        <div class="tf-cta"><button class="tf-btn">Book a demo</button></div>
-        <div class="tf-cta"><button class="tf-btn">Book a demo</button></div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<!-- BOTTOM CTA BAR -->
-<div class="bottom-cta">
-  <div class="bottom-cta__text">
-    <h3>Need more than 100 seats?</h3>
-    <p>Custom pricing, dedicated infrastructure, and a full onboarding team.</p>
-  </div>
-  <button class="bottom-cta__btn">TALK TO SALES »</button>
 </div>
 
 <script>
@@ -1271,17 +589,12 @@ const PLANS = [
   },
 ];
 
-// Feature table rates
-const FT_RATES = [
-  { monthly: 99,    m6: 84.15, m12: 69.30 }, // Basic
-  { monthly: 70,    m6: 59.50, m12: 49.00 }, // Starter
-  { monthly: 39.95, m6: 33.96, m12: 27.96 }, // Pro
-  { monthly: 29.98, m6: null,  m12: null   }, // Agency   (monthly only)
-  { monthly: 24.99, m6: null,  m12: null   }, // Enterprise (monthly only)
-];
-
 // ── STATE ──
-let state = { period: '12months', planId: 'basic', seats: 1 };
+let state = {
+  period: '12months',
+  planId: 'basic',
+  seats: 1,
+};
 
 // ── HELPERS ──
 function fmt(n) {
@@ -1289,29 +602,44 @@ function fmt(n) {
   const s = n.toFixed(2);
   return '$' + (s.endsWith('.00') ? n.toFixed(0) : s);
 }
+
 function fmtTotal(n) {
+  // Show up to 1 decimal, strip trailing zero
   const s = n.toFixed(1);
   return '$' + (s.endsWith('.0') ? n.toFixed(0) : s);
 }
+
 function getPlan(id) { return PLANS.find(p => p.id === id); }
+
 function getPlanIndex(id) { return PLANS.findIndex(p => p.id === id); }
-function getPrice(plan, period) { return plan.prices[period]; }
+
+function getPrice(plan, period) {
+  return plan.prices[period];
+}
+
 function totalCost(plan, seats, period) {
   const price = getPrice(plan, period);
   if (price === null) return null;
   const months = period === '12months' ? 12 : period === '6months' ? 6 : 1;
   return price * seats * months;
 }
+
 function roundSeats(planId, seats) {
   const plan = getPlan(planId);
-  if (!plan || plan.step === 1) return seats;
+  if (!plan) return seats;
+  if (plan.step === 1) return seats;
   return Math.ceil(seats / plan.step) * plan.step;
 }
 
-// ── TOGGLE ──
+// ── TOGGLE LOGIC ──
 const toggleBtns = document.querySelectorAll('.billing-toggle__btn');
 const track = document.getElementById('billing-track');
-const TOGGLE_META = { monthly: { width: 90, offset: 0 }, '6months': { width: 97, offset: 90 }, '12months': { width: 101, offset: 187 } };
+
+const TOGGLE_META = {
+  monthly:  { width: 90,  offset: 0 },
+  '6months':  { width: 97,  offset: 90 },
+  '12months': { width: 101, offset: 187 },
+};
 
 function applyToggle(period) {
   const { width, offset } = TOGGLE_META[period];
@@ -1323,7 +651,6 @@ function applyToggle(period) {
     b.setAttribute('aria-checked', active);
     b.tabIndex = active ? 0 : -1;
   });
-  updateFeatureTablePrices(period);
 }
 
 function setToggleDisabled() {
@@ -1345,29 +672,7 @@ toggleBtns.forEach(btn => {
   });
 });
 
-// ── FEATURE TABLE PRICES ──
-function updateFeatureTablePrices(period) {
-  const key = period === '6months' ? 'm6' : period === '12months' ? 'm12' : 'monthly';
-  FT_RATES.forEach((r, i) => {
-    const el    = document.getElementById('ft-price-' + i);
-    const unit  = document.getElementById('ft-unit-'  + i);
-    const sales = document.getElementById('ft-sales-' + i);
-    if (!el) return;
-    if (r[key] === null) {
-      el.style.display = 'none';
-      if (unit)  unit.style.display  = 'none';
-      if (sales) sales.style.display = 'inline';
-    } else {
-      el.style.display = '';
-      if (unit)  unit.style.display  = '';
-      if (sales) sales.style.display = 'none';
-      const v = r[key];
-      el.textContent = '$' + (Number.isInteger(v) ? v : v.toFixed(2));
-    }
-  });
-}
-
-// ── SEATS ──
+// ── SEATS LOGIC ──
 const seatsInput = document.getElementById('seats-input');
 const btnMinus = document.getElementById('btn-minus');
 const btnPlus = document.getElementById('btn-plus');
@@ -1393,8 +698,15 @@ function setSeats(n) {
   render();
 }
 
-btnMinus.addEventListener('click', () => { const plan = getPlan(state.planId); setSeats(state.seats - plan.step); });
-btnPlus.addEventListener('click',  () => { const plan = getPlan(state.planId); setSeats(state.seats + plan.step); });
+btnMinus.addEventListener('click', () => {
+  const plan = getPlan(state.planId);
+  setSeats(state.seats - plan.step);
+});
+
+btnPlus.addEventListener('click', () => {
+  const plan = getPlan(state.planId);
+  setSeats(state.seats + plan.step);
+});
 
 function handleManualSeatInput() {
   let val = parseInt(seatsInput.value, 10);
@@ -1419,6 +731,7 @@ function handleManualSeatInput() {
 }
 
 seatsInput.addEventListener('change', handleManualSeatInput);
+
 seatsInput.addEventListener('blur', handleManualSeatInput);
 
 // ── BANNER ──
@@ -1428,9 +741,11 @@ function renderBanner() {
   const seats = state.seats;
   const period = state.period;
 
+  // Banner formula
   let priceStr = fmt(price);
   let formulaHtml = '';
   let totalStr = '';
+  let isUpfront = period !== 'monthly';
 
   if (period === '12months') {
     const tot = price * seats * 12;
@@ -1462,7 +777,11 @@ function renderBanner() {
       const savings = currentTotal - nextTotal;
       if (savings > bestSavings) {
         bestSavings = savings;
-        upgradeSuggestion = { plan: nextPlan, effectiveSeats, savings: fmtTotal(savings) };
+        upgradeSuggestion = {
+          plan: nextPlan,
+          effectiveSeats,
+          savings: fmtTotal(savings),
+        };
       }
     }
   }
@@ -1472,17 +791,17 @@ function renderBanner() {
   if (period === 'monthly' && !plan.restricted) {
     const sixMonthPrice = getPrice(plan, '6months');
     if (sixMonthPrice !== null) {
-      const currentTotal6 = price * seats * 6;
+      const currentTotal = price * seats * 6;
       const sixTotal = sixMonthPrice * seats * 6;
-      const saved = currentTotal6 - sixTotal;
+      const saved = currentTotal - sixTotal;
       if (saved > 0) billingSave = { amount: fmtTotal(saved), label: '6 Months' };
     }
   } else if (period === '6months' && !plan.restricted) {
     const twelvePrice = getPrice(plan, '12months');
     if (twelvePrice !== null) {
-      const currentTotal12 = price * seats * 12;
+      const currentTotal = price * seats * 12;
       const twelveTotal = twelvePrice * seats * 12;
-      const saved = currentTotal12 - twelveTotal;
+      const saved = currentTotal - twelveTotal;
       if (saved > 0) billingSave = { amount: fmtTotal(saved), label: '12 Months' };
     }
   }
@@ -1494,7 +813,6 @@ function renderBanner() {
   const showSalesNudge = (period === '6months' || period === '12months') && seats >= 50 && !upgradeSuggestion;
 
   const banner = document.getElementById('banner');
-
   let html = `
     <span class="banner__plan-chip">${plan.name}</span>
     <span class="banner__price">${priceStr}/seat</span>
@@ -1510,7 +828,9 @@ function renderBanner() {
   }
 
   if (upgradeSuggestion) {
-    const seatNote = upgradeSuggestion.effectiveSeats !== seats ? ` (${upgradeSuggestion.effectiveSeats} seats)` : '';
+    const seatNote = upgradeSuggestion.effectiveSeats !== seats
+      ? ` (${upgradeSuggestion.effectiveSeats} seats)`
+      : '';
     html += `<span class="banner__save-text">Save ${upgradeSuggestion.savings} with ${upgradeSuggestion.plan.name}${seatNote}</span>`;
     html += `<button class="banner__switch-btn" data-switch="${upgradeSuggestion.plan.id}" data-seats="${upgradeSuggestion.effectiveSeats}">Switch to ${upgradeSuggestion.plan.name}</button>`;
   }
@@ -1521,10 +841,13 @@ function renderBanner() {
 
   banner.innerHTML = html;
 
+  // Bind switch button
   const switchBtn = banner.querySelector('.banner__switch-btn');
   if (switchBtn) {
     switchBtn.addEventListener('click', () => {
-      selectPlan(switchBtn.dataset.switch, parseInt(switchBtn.dataset.seats, 10));
+      const targetId = switchBtn.dataset.switch;
+      const targetSeats = parseInt(switchBtn.dataset.seats, 10);
+      selectPlan(targetId, targetSeats);
     });
   }
 }
@@ -1544,8 +867,6 @@ function renderCards() {
     card.className = 'plan-card' + (isSelected ? ' plan-card--selected' : '');
     card.dataset.planId = plan.id;
 
-    const infoHtml = '';
-
     const metaLabel = plan.minSeats === 1 ? '1+ users' : `${plan.minSeats}+ seats`;
 
     const priceAreaHtml = showSalesText
@@ -1560,7 +881,6 @@ function renderCards() {
       <div class="plan-card__selected-badge"><span>✓ Selected</span></div>
       <div class="plan-card__name-row">
         <span class="plan-card__name">${plan.name}</span>
-        ${infoHtml}
       </div>
       ${priceAreaHtml}
       <div class="plan-card__meta">
@@ -1596,11 +916,13 @@ function render() {
   setToggleDisabled();
   renderBanner();
   renderCards();
+
   const plan = getPlan(state.planId);
   btnMinus.disabled = state.seats <= plan.minSeats;
 }
 
 // ── INIT ──
+// Set default: 12months active for Basic
 applyToggle('12months');
 selectPlan('basic');
 </script>

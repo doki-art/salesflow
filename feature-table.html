@@ -82,7 +82,18 @@ body {
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  overflow: hidden;
+  overflow: visible;
+}
+
+/* Clip only the background/corners, not tooltips */
+.fth-sticky::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  background: var(--surface);
+  z-index: -1;
 }
 
 /* Min seats row — part of scrollable body */
@@ -143,6 +154,7 @@ body {
   white-space: nowrap; pointer-events: none;
   box-shadow: 0 4px 14px rgba(0,0,0,0.22);
   letter-spacing: 0;
+  z-index: 200;
 }
 .info-icon .tooltip::after {
   content: '';
@@ -219,6 +231,16 @@ body {
 }
 .check { color: var(--green); font-size: 18px; }
 .cross { color: var(--red); font-size: 15px; }
+
+/* Sales caption for Agency / Enterprise on non-monthly periods */
+.sales-caption {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--blue);
+  text-align: center;
+  line-height: 1.3;
+  white-space: normal;
+}
 
 /* ── FOOTER ── */
 .table-footer {
@@ -313,10 +335,8 @@ body {
         <span class="plan-badge">Agency</span>
         <div class="price-line">
           <span class="price-val" id="price-3">$29.98</span>
-          <span class="price-unit">/seat</span>
-          <span class="info-icon">i
-            <span class="tooltip">12-month plan only · paid upfront</span>
-          </span>
+          <span class="price-unit" id="unit-3">/seat</span>
+          <span class="sales-caption" id="sales-3" style="display:none;">Speak with our Sales team</span>
         </div>
       </div>
 
@@ -324,10 +344,8 @@ body {
         <span class="plan-badge">Enterprise</span>
         <div class="price-line">
           <span class="price-val" id="price-4">$24.99</span>
-          <span class="price-unit">/seat</span>
-          <span class="info-icon">i
-            <span class="tooltip">12-month plan only · paid upfront</span>
-          </span>
+          <span class="price-unit" id="unit-4">/seat</span>
+          <span class="sales-caption" id="sales-4" style="display:none;">Speak with our Sales team</span>
         </div>
       </div>
     </div>
@@ -385,7 +403,7 @@ body {
   <div class="fgroup"><div class="fgroup-label">Plan differentiators</div></div>
 
   <div class="frow">
-    <div class="fname">Dedicated CSM + Priority Support <small>Replaces standard email support</small></div>
+    <div class="fname">Dedicated CSM + Priority Support <small>Direct access to our team</small></div>
     <div class="fval"><span class="cross">✕</span></div>
     <div class="fval"><span class="cross">✕</span></div>
     <div class="fval"><span class="cross">✕</span></div>
@@ -394,7 +412,16 @@ body {
   </div>
 
   <div class="frow">
-    <div class="fname">Whitelabel</div>
+    <div class="fname">URL & Access Customisation <small>Whitelabel DNS record</small></div>
+    <div class="fval"><span class="cross">✕</span></div>
+    <div class="fval"><span class="cross">✕</span></div>
+    <div class="fval"><span class="cross">✕</span></div>
+    <div class="fval"><span class="check">✓</span></div>
+    <div class="fval"><span class="check">✓</span></div>
+  </div>
+
+  <div class="frow">
+    <div class="fname">UI Customisation <small>Whitelabel branding</small></div>
     <div class="fval"><span class="cross">✕</span></div>
     <div class="fval"><span class="cross">✕</span></div>
     <div class="fval"><span class="check">✓</span></div>
@@ -403,7 +430,7 @@ body {
   </div>
 
   <div class="frow">
-    <div class="fname">Custom Domain</div>
+    <div class="fname">Whitelabel Domain (DNS)</div>
     <div class="fval"><span class="cross">✕</span></div>
     <div class="fval"><span class="cross">✕</span></div>
     <div class="fval"><span class="check">✓</span></div>
@@ -448,7 +475,7 @@ body {
     <div class="tf-cta"><button class="tf-btn">Book a demo</button></div>
     <div class="tf-cta"><button class="tf-btn">Book a demo</button></div>
     <div class="tf-cta"><button class="tf-btn">Book a demo</button></div>
-    <div class="tf-cta"><button class="tf-btn">Talk to sales</button></div>
+    <div class="tf-cta"><button class="tf-btn">Book a demo</button></div>
   </div>
 
 </div><!-- /feature-table -->
@@ -458,8 +485,8 @@ const RATES = [
   { monthly: 99,    m6: 84.15,  m12: 69.30 }, // Basic      (−15% / −30%)
   { monthly: 70,    m6: 59.50,  m12: 49.00 }, // Starter    (−15% / −30%)
   { monthly: 39.95, m6: 33.96,  m12: 27.96 }, // Pro        (−15% / −30%)
-  { monthly: 29.98, m6: 25.48,  m12: 20.99 }, // Agency     (−15% / −30%)
-  { monthly: 24.99, m6: 21.24,  m12: 17.49 }, // Enterprise (−15% / −30%)
+  { monthly: 29.98, m6: null,   m12: null   }, // Agency     (monthly only)
+  { monthly: 24.99, m6: null,   m12: null   }, // Enterprise (monthly only)
 ];
 
 function fmt(n) {
@@ -467,7 +494,6 @@ function fmt(n) {
 }
 
 function setBilling(period) {
-  // Update toggle active state
   document.querySelectorAll('.billing-btn').forEach(b =>
     b.classList.toggle('active', b.dataset.period === period)
   );
@@ -476,7 +502,21 @@ function setBilling(period) {
 
   RATES.forEach((r, i) => {
     const el = document.getElementById('price-' + i);
-    if (el) el.textContent = fmt(r[key]);
+    const unit = document.getElementById('unit-' + i);
+    const sales = document.getElementById('sales-' + i);
+    if (!el) return;
+
+    if (r[key] === null) {
+      // Agency / Enterprise on 6mo or 12mo — hide price, show sales caption
+      el.style.display = 'none';
+      if (unit) unit.style.display = 'none';
+      if (sales) sales.style.display = 'inline';
+    } else {
+      el.style.display = '';
+      if (unit) unit.style.display = '';
+      if (sales) sales.style.display = 'none';
+      el.textContent = fmt(r[key]);
+    }
   });
 }
 </script>
