@@ -348,10 +348,24 @@ body {
   border-radius: 12px;
   padding: 14px 18px;
   display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 52px;
+}
+
+.banner__line1 {
+  display: flex;
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
-  min-height: 52px;
+}
+
+.banner__line2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-left: 2px;
 }
 
 .banner__plan-chip {
@@ -396,6 +410,14 @@ body {
   font-size: 12px;
   font-weight: 600;
   color: var(--text-3);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.banner__rec-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -475,6 +497,14 @@ body {
   cursor: help;
 }
 
+.plan-card--recommended {
+  border-color: var(--green) !important;
+  box-shadow:
+    0px 0px 0px 3px rgba(22,163,74,0.1),
+    0px 12px 40px 0px rgba(0,0,0,0.09),
+    0px 4px 12px 0px rgba(0,0,0,0.05) !important;
+}
+
 .plan-card__selected-badge {
   display: none;
   position: absolute;
@@ -497,6 +527,37 @@ body {
   letter-spacing: 0.5px;
   text-transform: uppercase;
 }
+
+.plan-card__recommended-badge {
+  display: none;
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--green);
+  border-radius: 20px;
+  box-shadow: 0px 6px 20px 0px rgba(22,163,74,0.28);
+  height: 19px;
+  padding: 0 12px;
+  align-items: center;
+  white-space: nowrap;
+}
+.plan-card--recommended .plan-card__recommended-badge { display: flex; }
+.plan-card__recommended-badge span {
+  font-size: 10px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.plan-card--recommended .plan-card__btn {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+  box-shadow: 0px 6px 20px 0px rgba(22,163,74,0.28);
+}
+.plan-card--recommended .plan-card__btn:hover { background: #15803d; border-color: #15803d; }
 
 .plan-card__name-row {
   display: flex;
@@ -672,7 +733,7 @@ body {
 
 .fth, .frow, .frow-all, .fgroup, .min-seats-row, .table-footer {
   display: grid;
-  grid-template-columns: 2.2fr repeat(5, 1fr);
+  grid-template-columns: 1.8fr repeat(5, 1fr);
 }
 
 .fth-sticky {
@@ -751,14 +812,48 @@ body {
   color: var(--text-3);
 }
 
+/* ── FEATURE TABLE COLUMN HIGHLIGHTS ── */
+.fth-cell.ft-selected {
+  background: var(--blue-light);
+  border-top: 3px solid var(--blue);
+}
+.fth-cell.ft-recommended {
+  background: #f0fdf4;
+  border-top: 3px solid var(--green);
+}
+
+.ft-col-indicator {
+  display: none;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+.ft-selected .ft-col-indicator {
+  display: inline-flex;
+  background: var(--blue);
+  color: #fff;
+}
+.ft-recommended .ft-col-indicator {
+  display: inline-flex;
+  background: var(--green);
+  color: #fff;
+}
+
+.fth-cell.ft-selected .plan-badge { background: var(--blue-mid); color: var(--blue); }
+.fth-cell.ft-recommended .plan-badge { background: #bbf7d0; color: var(--green); }
+
+
 /* Sales caption for Agency / Enterprise on non-monthly periods */
 .sales-caption {
   font-size: 10px;
   font-weight: 700;
   color: var(--blue);
   text-align: center;
-  line-height: 1.3;
-  white-space: normal;
+  line-height: 1.4;
 }
 
 /* Sales text in plan cards */
@@ -997,7 +1092,7 @@ body {
 <!-- HERO -->
 <div class="hero">
   <h1 class="hero__title">Simple, <span>transparent</span> pricing</h1>
-  <p class="hero__sub">The bigger your team, the less you pay per seat.<br>Start free — no credit card required.</p>
+  <p class="hero__sub">The bigger your team, the less you pay per seat.<br>The higher the plan, the more features you unlock.<br>Start free — no credit card required.</p>
 </div>
 
 <!-- STICKY BILLING TOGGLE -->
@@ -1053,42 +1148,47 @@ body {
       <div class="fth-sticky">
         <div class="fth">
           <div class="fth-cell fth-label">Feature</div>
-          <div class="fth-cell">
+          <div class="fth-cell" data-plan="basic">
+            <span class="ft-col-indicator">✓ Selected</span>
             <span class="plan-badge">Basic</span>
             <div class="price-line">
               <span class="price-val" id="ft-price-0">$99</span>
               <span class="price-unit">/seat</span>
             </div>
           </div>
-          <div class="fth-cell">
+          <div class="fth-cell" data-plan="starter">
+            <span class="ft-col-indicator">✓ Selected</span>
             <span class="plan-badge">Starter</span>
             <div class="price-line">
               <span class="price-val" id="ft-price-1">$70</span>
               <span class="price-unit">/seat</span>
             </div>
           </div>
-          <div class="fth-cell">
+          <div class="fth-cell" data-plan="pro">
+            <span class="ft-col-indicator">✓ Selected</span>
             <span class="plan-badge">Pro</span>
             <div class="price-line">
               <span class="price-val" id="ft-price-2">$39.95</span>
               <span class="price-unit">/seat</span>
             </div>
           </div>
-          <div class="fth-cell">
+          <div class="fth-cell" data-plan="agency">
+            <span class="ft-col-indicator">✓ Selected</span>
             <span class="plan-badge">Agency</span>
-            <div class="price-line">
+            <div class="price-line" id="ft-priceline-3">
               <span class="price-val" id="ft-price-3">$29.98</span>
               <span class="price-unit" id="ft-unit-3">/seat</span>
-              <span class="sales-caption" id="ft-sales-3" style="display:none;">Speak with our Sales team</span>
             </div>
+            <span class="sales-caption" id="ft-sales-3" style="display:none;">Speak with our<br>Sales team</span>
           </div>
-          <div class="fth-cell">
+          <div class="fth-cell" data-plan="enterprise">
+            <span class="ft-col-indicator">✓ Selected</span>
             <span class="plan-badge">Enterprise</span>
-            <div class="price-line">
+            <div class="price-line" id="ft-priceline-4">
               <span class="price-val" id="ft-price-4">$24.99</span>
               <span class="price-unit" id="ft-unit-4">/seat</span>
-              <span class="sales-caption" id="ft-sales-4" style="display:none;">Speak with our Sales team</span>
             </div>
+            <span class="sales-caption" id="ft-sales-4" style="display:none;">Speak with our<br>Sales team</span>
           </div>
         </div>
       </div>
@@ -1107,39 +1207,35 @@ body {
       <div class="fgroup"><div class="fgroup-label">Included in all plans</div></div>
 
       <div class="frow-all">
-        <div class="fname">Multichannel</div>
-        <div class="fall-span"><span class="all-badge">All plans</span>LinkedIn, Email</div>
-      </div>
-      <div class="frow-all">
-        <div class="fname">Dynamic Outreach</div>
-        <div class="fall-span"><span class="all-badge">All plans</span>Multi-channel adaptive workflows</div>
+        <div class="fname">Multichannel Dynamic Outreach</div>
+        <div class="fall-span"><span class="all-badge">All plans</span>Adaptive multi-channel workflows that automatically choose the best action based on each prospect's behaviour</div>
       </div>
       <div class="frow-all">
         <div class="fname">Unified Inbox</div>
-        <div class="fall-span"><span class="all-badge">All plans</span>LinkedIn, Sales Navigator</div>
+        <div class="fall-span"><span class="all-badge">All plans</span>Manage conversations from LinkedIn and Sales Navigator in a single inbox</div>
       </div>
       <div class="frow-all">
         <div class="fname">Inbox Management</div>
-        <div class="fall-span"><span class="all-badge">All plans</span>Reminders, Snooze, Scheduled send, Quick response templates, All filters</div>
+        <div class="fall-span"><span class="all-badge">All plans</span>Stay organised with reminders, snooze, scheduled sending, quick reply templates, and advanced filters</div>
       </div>
       <div class="frow-all">
         <div class="fname">Campaign Intelligence and Analytics</div>
-        <div class="fall-span"><span class="all-badge">All plans</span>Overview, LinkedIn, Email</div>
+        <div class="fall-span"><span class="all-badge">All plans</span>Track campaign performance across LinkedIn and Email with unified reporting and insights</div>
       </div>
       <div class="frow-all">
         <div class="fname">Native Integrations</div>
-        <div class="fall-span"><span class="all-badge">All plans</span>HubSpot, Sales Navigator, Zapier</div>
+        <div class="fall-span"><span class="all-badge">All plans</span>Connect Salesflow with HubSpot, LinkedIn Sales Navigator, and thousands of apps via Zapier</div>
       </div>
       <div class="frow-all">
         <div class="fname">Standard Email Support</div>
-        <div class="fall-span"><span class="all-badge">All plans</span></div>
+        <div class="fall-span"><span class="all-badge">All plans</span>Get help from our support team via email whenever you need assistance</div>
       </div>
 
       <!-- Plan differentiators -->
       <div class="fgroup"><div class="fgroup-label">Plan differentiators</div></div>
 
       <div class="frow">
-        <div class="fname">Dedicated CSM + Priority Support <small>Direct access to our team</small></div>
+        <div class="fname">Dedicated CSM + Priority Support <small>Dedicated manager with faster support responses</small></div>
         <div class="fval"><span class="cross">✕</span></div>
         <div class="fval"><span class="cross">✕</span></div>
         <div class="fval"><span class="cross">✕</span></div>
@@ -1147,15 +1243,7 @@ body {
         <div class="fval"><span class="check">✓</span></div>
       </div>
       <div class="frow">
-        <div class="fname">URL & Access Customisation <small>Whitelabel DNS record</small></div>
-        <div class="fval"><span class="cross">✕</span></div>
-        <div class="fval"><span class="cross">✕</span></div>
-        <div class="fval"><span class="cross">✕</span></div>
-        <div class="fval"><span class="check">✓</span></div>
-        <div class="fval"><span class="check">✓</span></div>
-      </div>
-      <div class="frow">
-        <div class="fname">UI Customisation <small>Whitelabel branding</small></div>
+        <div class="fname">Whitelabel URL & Access Customisation <small>Custom login URL for your workspace</small></div>
         <div class="fval"><span class="cross">✕</span></div>
         <div class="fval"><span class="cross">✕</span></div>
         <div class="fval"><span class="check">✓</span></div>
@@ -1163,23 +1251,23 @@ body {
         <div class="fval"><span class="check">✓</span></div>
       </div>
       <div class="frow">
-        <div class="fname">Whitelabel Domain (DNS)</div>
-        <div class="fval"><span class="cross">✕</span></div>
-        <div class="fval"><span class="cross">✕</span></div>
+        <div class="fname">UI Customisation <small>Add your brand to the platform</small></div>
         <div class="fval"><span class="check">✓</span></div>
         <div class="fval"><span class="check">✓</span></div>
-        <div class="fval"><span class="check">✓</span></div>
-      </div>
-      <div class="frow">
-        <div class="fname">API Access</div>
-        <div class="fval"><span class="cross">✕</span></div>
-        <div class="fval"><span class="cross">✕</span></div>
         <div class="fval"><span class="check">✓</span></div>
         <div class="fval"><span class="check">✓</span></div>
         <div class="fval"><span class="check">✓</span></div>
       </div>
       <div class="frow">
-        <div class="fname">Early Feature Access <small>Beta Program Access</small></div>
+        <div class="fname">API Access <small>Connect Salesflow with your tools</small></div>
+        <div class="fval"><span class="check">✓</span></div>
+        <div class="fval"><span class="check">✓</span></div>
+        <div class="fval"><span class="check">✓</span></div>
+        <div class="fval"><span class="check">✓</span></div>
+        <div class="fval"><span class="check">✓</span></div>
+      </div>
+      <div class="frow">
+        <div class="fname">Early Feature Access <small>Try new features before public release</small></div>
         <div class="fval"><span class="cross">✕</span></div>
         <div class="fval"><span class="cross">✕</span></div>
         <div class="fval"><span class="check">✓</span></div>
@@ -1282,6 +1370,7 @@ const FT_RATES = [
 
 // ── STATE ──
 let state = { period: '12months', planId: 'basic', seats: 1 };
+let recommendedPlanId = null;
 
 // ── HELPERS ──
 function fmt(n) {
@@ -1345,21 +1434,34 @@ toggleBtns.forEach(btn => {
   });
 });
 
-// ── FEATURE TABLE PRICES ──
+// ── FEATURE TABLE HIGHLIGHTS ──
+function updateFeatureTableHighlights() {
+  document.querySelectorAll('.fth-cell[data-plan]').forEach(cell => {
+    const plan = cell.dataset.plan;
+    const isSelected = plan === state.planId;
+    const isRecommended = !isSelected && plan === recommendedPlanId;
+    cell.classList.toggle('ft-selected', isSelected);
+    cell.classList.toggle('ft-recommended', isRecommended);
+    const indicator = cell.querySelector('.ft-col-indicator');
+    if (indicator) {
+      indicator.textContent = isSelected ? '✓ Selected' : '★ Recommended';
+    }
+  });
+}
+
+
 function updateFeatureTablePrices(period) {
   const key = period === '6months' ? 'm6' : period === '12months' ? 'm12' : 'monthly';
   FT_RATES.forEach((r, i) => {
-    const el    = document.getElementById('ft-price-' + i);
-    const unit  = document.getElementById('ft-unit-'  + i);
-    const sales = document.getElementById('ft-sales-' + i);
+    const el       = document.getElementById('ft-price-' + i);
+    const priceline = document.getElementById('ft-priceline-' + i);
+    const sales    = document.getElementById('ft-sales-' + i);
     if (!el) return;
     if (r[key] === null) {
-      el.style.display = 'none';
-      if (unit)  unit.style.display  = 'none';
-      if (sales) sales.style.display = 'inline';
+      if (priceline) priceline.style.display = 'none';
+      if (sales) sales.style.display = '';
     } else {
-      el.style.display = '';
-      if (unit)  unit.style.display  = '';
+      if (priceline) priceline.style.display = '';
       if (sales) sales.style.display = 'none';
       const v = r[key];
       el.textContent = '$' + (Number.isInteger(v) ? v : v.toFixed(2));
@@ -1372,12 +1474,11 @@ const seatsInput = document.getElementById('seats-input');
 const btnMinus = document.getElementById('btn-minus');
 const btnPlus = document.getElementById('btn-plus');
 
-// Returns the highest plan whose minSeats <= val (within current frequency)
 function bestPlanForSeats(val) {
   let best = PLANS[0];
   for (const p of PLANS) {
     const price = getPrice(p, state.period);
-    if (price === null) continue; // plan not available on this frequency
+    if (price === null) continue;
     if (p.minSeats <= val) best = p;
   }
   return best;
@@ -1404,7 +1505,6 @@ function handleManualSeatInput() {
   const currentPlan = getPlan(state.planId);
 
   if (val < currentPlan.minSeats) {
-    // Auto-switch to the best-fit plan for this seat count
     const targetPlan = bestPlanForSeats(val);
     const roundedVal = roundSeats(targetPlan.id, val);
     state.planId = targetPlan.id;
@@ -1429,24 +1529,26 @@ function renderBanner() {
   const period = state.period;
 
   let priceStr = fmt(price);
-  let formulaHtml = '';
   let totalStr = '';
 
   if (period === '12months') {
-    const tot = price * seats * 12;
-    totalStr = fmtTotal(tot);
-    formulaHtml = `paid upfront:&nbsp; ${seats} seat${seats !== 1 ? 's' : ''} × ${priceStr}/seat × 12 mo = ${totalStr}`;
+    totalStr = fmtTotal(price * seats * 12);
   } else if (period === '6months') {
-    const tot = price * seats * 6;
-    totalStr = fmtTotal(tot);
-    formulaHtml = `paid upfront:&nbsp; ${seats} seat${seats !== 1 ? 's' : ''} × ${priceStr}/seat × 6 mo = ${totalStr}`;
+    totalStr = fmtTotal(price * seats * 6);
   } else {
-    const tot = price * seats;
-    totalStr = fmtTotal(tot);
-    formulaHtml = `&nbsp;${seats} seat${seats !== 1 ? 's' : ''} × ${priceStr}/seat = ${totalStr}`;
+    totalStr = fmtTotal(price * seats);
   }
 
-  // Upgrade suggestion — find the best-value plan across all higher tiers
+  let formulaHtml = '';
+  if (period === '12months') {
+    formulaHtml = `${seats} seat${seats !== 1 ? 's' : ''} × ${priceStr}/seat × 12 mo = ${totalStr} paid upfront`;
+  } else if (period === '6months') {
+    formulaHtml = `${seats} seat${seats !== 1 ? 's' : ''} × ${priceStr}/seat × 6 mo = ${totalStr} paid upfront`;
+  } else {
+    formulaHtml = `${seats} seat${seats !== 1 ? 's' : ''} × ${priceStr}/seat = ${totalStr}`;
+  }
+
+  // Upgrade suggestion
   let upgradeSuggestion = null;
   const planIdx = getPlanIndex(plan.id);
   const currentTotal = totalCost(plan, seats, period);
@@ -1462,64 +1564,71 @@ function renderBanner() {
       const savings = currentTotal - nextTotal;
       if (savings > bestSavings) {
         bestSavings = savings;
-        upgradeSuggestion = { plan: nextPlan, effectiveSeats, savings: fmtTotal(savings) };
+        const savingsPerSeat = savings / effectiveSeats;
+        upgradeSuggestion = {
+          plan: nextPlan,
+          effectiveSeats,
+          savingsTotal: fmtTotal(savings),
+          savingsPerSeat: fmtTotal(savingsPerSeat),
+        };
       }
     }
   }
 
-  // "Save with billing" hint — when on monthly, show 6mo savings; when on 6mo, show 12mo savings
+  recommendedPlanId = upgradeSuggestion ? upgradeSuggestion.plan.id : null;
+
+  // Billing save hint
   let billingSave = null;
   if (period === 'monthly' && !plan.restricted) {
     const sixMonthPrice = getPrice(plan, '6months');
     if (sixMonthPrice !== null) {
-      const currentTotal6 = price * seats * 6;
-      const sixTotal = sixMonthPrice * seats * 6;
-      const saved = currentTotal6 - sixTotal;
+      const saved = (price * seats * 6) - (sixMonthPrice * seats * 6);
       if (saved > 0) billingSave = { amount: fmtTotal(saved), label: '6 Months' };
     }
   } else if (period === '6months' && !plan.restricted) {
     const twelvePrice = getPrice(plan, '12months');
     if (twelvePrice !== null) {
-      const currentTotal12 = price * seats * 12;
-      const twelveTotal = twelvePrice * seats * 12;
-      const saved = currentTotal12 - twelveTotal;
+      const saved = (price * seats * 12) - (twelvePrice * seats * 12);
       if (saved > 0) billingSave = { amount: fmtTotal(saved), label: '12 Months' };
     }
   }
 
-  // Best value badge: show on 12months with no upgrade suggestion
   const showBest = period === '12months' && !upgradeSuggestion;
-
-  // Sales nudge: 50+ seats on 6mo or 12mo
   const showSalesNudge = (period === '6months' || period === '12months') && seats >= 50 && !upgradeSuggestion;
 
   const banner = document.getElementById('banner');
 
-  let html = `
+  // Line 1
+  let line1Html = `
     <span class="banner__plan-chip">${plan.name}</span>
     <span class="banner__price">${priceStr}/seat</span>
     <span class="banner__formula">${formulaHtml}</span>
   `;
-
   if (showBest && !showSalesNudge) {
-    html += `<span class="banner__best">Best value</span>`;
+    line1Html += `<span class="banner__best">Best value</span>`;
+  }
+  if (billingSave) {
+    line1Html += `<span class="banner__billing-save">💡 Save ${billingSave.amount} with ${billingSave.label}</span>`;
   }
 
-  if (showSalesNudge) {
-    html += `<span class="banner__sales-nudge">For a better price, speak with our Sales team</span>`;
-  }
-
+  // Line 2
+  let line2Html = '';
   if (upgradeSuggestion) {
     const seatNote = upgradeSuggestion.effectiveSeats !== seats ? ` (${upgradeSuggestion.effectiveSeats} seats)` : '';
-    html += `<span class="banner__save-text">Save ${upgradeSuggestion.savings} with ${upgradeSuggestion.plan.name}${seatNote}</span>`;
-    html += `<button class="banner__switch-btn" data-switch="${upgradeSuggestion.plan.id}" data-seats="${upgradeSuggestion.effectiveSeats}">Switch to ${upgradeSuggestion.plan.name}</button>`;
+    line2Html = `
+      <span class="banner__rec-label">Recommended for your team size:</span>
+      <span class="banner__save-text">${upgradeSuggestion.plan.name}${seatNote} — Save ${upgradeSuggestion.savingsPerSeat}/seat</span>
+      <button class="banner__switch-btn" data-switch="${upgradeSuggestion.plan.id}" data-seats="${upgradeSuggestion.effectiveSeats}">Switch to ${upgradeSuggestion.plan.name}</button>
+    `;
+  }
+  if (showSalesNudge) {
+    line2Html = `<span class="banner__sales-nudge">For a better price, speak with our Sales team</span>`;
   }
 
-  if (billingSave) {
-    html += `<span class="banner__billing-save">💡 Save ${billingSave.amount} with ${billingSave.label}</span>`;
-  }
-
-  banner.innerHTML = html;
+  banner.innerHTML = `
+    <div class="banner__line1">${line1Html}</div>
+    ${line2Html ? `<div class="banner__line2">${line2Html}</div>` : ''}
+  `;
 
   const switchBtn = banner.querySelector('.banner__switch-btn');
   if (switchBtn) {
@@ -1536,15 +1645,17 @@ function renderCards() {
 
   PLANS.forEach(plan => {
     const isSelected = plan.id === state.planId;
+    const isRecommended = !isSelected && plan.id === recommendedPlanId;
     const price = getPrice(plan, state.period);
     const showSalesText = plan.restricted && state.period !== 'monthly';
     const displayPrice = price !== null ? price : plan.prices['monthly'];
 
     const card = document.createElement('div');
-    card.className = 'plan-card' + (isSelected ? ' plan-card--selected' : '');
+    let cardClass = 'plan-card';
+    if (isSelected) cardClass += ' plan-card--selected';
+    if (isRecommended) cardClass += ' plan-card--recommended';
+    card.className = cardClass;
     card.dataset.planId = plan.id;
-
-    const infoHtml = '';
 
     const metaLabel = plan.minSeats === 1 ? '1+ users' : `${plan.minSeats}+ seats`;
 
@@ -1558,9 +1669,9 @@ function renderCards() {
 
     card.innerHTML = `
       <div class="plan-card__selected-badge"><span>✓ Selected</span></div>
+      <div class="plan-card__recommended-badge"><span>★ Recommended</span></div>
       <div class="plan-card__name-row">
         <span class="plan-card__name">${plan.name}</span>
-        ${infoHtml}
       </div>
       ${priceAreaHtml}
       <div class="plan-card__meta">
@@ -1570,7 +1681,6 @@ function renderCards() {
     `;
 
     card.addEventListener('click', () => selectPlan(plan.id));
-
     container.appendChild(card);
   });
 }
@@ -1596,6 +1706,7 @@ function render() {
   setToggleDisabled();
   renderBanner();
   renderCards();
+  updateFeatureTableHighlights();
   const plan = getPlan(state.planId);
   btnMinus.disabled = state.seats <= plan.minSeats;
 }
