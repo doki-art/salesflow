@@ -1680,7 +1680,22 @@ function renderCards() {
       <button class="plan-card__btn">${plan.btn}</button>
     `;
 
-    card.addEventListener('click', () => selectPlan(plan.id));
+    card.addEventListener('click', () => {
+      // Clicking the card body selects the plan and switches billing if needed
+      if (plan.restricted && state.period !== 'monthly') {
+        state.period = 'monthly';
+        applyToggle('monthly');
+      }
+      selectPlan(plan.id);
+    });
+
+    const btn = card.querySelector('.plan-card__btn');
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      // TODO: replace with actual destination URL when ready
+      // window.location.href = '/book-a-demo';
+    });
+
     container.appendChild(card);
   });
 }
@@ -1688,11 +1703,6 @@ function renderCards() {
 function selectPlan(planId, overrideSeats) {
   const plan = getPlan(planId);
   if (!plan) return;
-
-  if (plan.restricted && state.period !== 'monthly') {
-    state.period = 'monthly';
-    applyToggle('monthly');
-  }
 
   state.planId = planId;
   state.seats = overrideSeats !== undefined ? overrideSeats : plan.minSeats;
