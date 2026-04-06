@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subscription Info – Salesflow</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Montserrat', sans-serif; background: #f8f8f8; display: flex; min-height: 100vh; }
+
+  /* ── LEFT NAV ── */
+  .nav { width: 240px; background: #fff; box-shadow: 0 0 8px rgba(9,22,45,0.08); display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; padding-bottom: 12px; }
+  .nav-logo { padding: 20px 0 16px; display: flex; justify-content: center; }
+  .nav-logo img { height: 32px; }
+  .nav-user { display: flex; flex-direction: column; align-items: center; gap: 8px; padding-bottom: 16px; }
+  .nav-user-photo { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; }
+  .nav-user-status { background: #f8f8f8; border-radius: 4px; padding: 3px 10px; font-size: 10px; font-weight: 500; color: #36b37e; }
+  .nav-user-name { font-size: 14px; font-weight: 600; color: #253858; text-align: center; width: 200px; overflow: hidden; text-overflow: ellipsis; line-height: 18px; }
+  .nav-user-meta { font-size: 10px; font-weight: 500; color: #647188; text-align: center; line-height: 14px; }
+  .nav-item { display: flex; align-items: center; height: 38px; padding-right: 20px; cursor: pointer; position: relative; }
+  .nav-item .selector { width: 3px; height: 38px; background: transparent; border-radius: 0 100px 100px 0; flex-shrink: 0; }
+  .nav-item.active { background: #e9f2ff; }
+  .nav-item.active .selector { background: #2684ff; }
+  .nav-item-inner { display: flex; align-items: center; gap: 12px; position: absolute; left: 34px; }
+  .nav-item-icon { width: 16px; height: 16px; opacity: 0.6; }
+  .nav-item-label { font-size: 12px; font-weight: 600; color: #929bab; white-space: nowrap; }
+  .nav-item.active .nav-item-label { color: #2684ff; }
+  .nav-item-arrow { margin-left: auto; width: 16px; height: 16px; opacity: 0.5; }
+  .nav-submenu { background: #f8f8f8; }
+  .nav-subitem { padding: 10px 16px 10px 50px; font-size: 12px; font-weight: 500; color: #647188; cursor: pointer; }
+  .nav-subitem.active { color: #2684ff; font-weight: 600; }
+  .nav-section-label { font-size: 10px; font-weight: 500; color: #a4abb8; padding: 14px 16px 10px 50px; }
+  .nav-bottom { margin-top: auto; padding: 20px 0; }
+
+  /* ── MAIN ── */
+  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .topbar { background: #fff; height: 56px; display: flex; align-items: center; justify-content: flex-end; padding: 0 50px; flex-shrink: 0; }
+  .topbar-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+  .content { padding: 20px 30px 56px; display: flex; flex-direction: column; gap: 20px; }
+
+  /* ── TABS ── */
+  .tabs-card { background: #fff; border-radius: 6px 6px 0 0; box-shadow: 0 2px 12px rgba(20,31,50,0.1); padding-top: 12px; }
+  .tabs { display: flex; gap: 32px; padding: 0 12px; }
+  .tab { display: flex; flex-direction: column; align-items: center; gap: 12px; cursor: pointer; padding-bottom: 0; }
+  .tab-label { font-size: 14px; font-weight: 500; color: #647188; padding: 0 12px; white-space: nowrap; }
+  .tab.active .tab-label { font-weight: 600; color: #253858; }
+  .tab-indicator { height: 4px; border-radius: 100px 100px 0 0; width: 100%; background: transparent; }
+  .tab.active .tab-indicator { background: #2684ff; }
+
+  /* ── INFO CARDS ROW ── */
+  .cards-row { display: flex; gap: 24px; }
+  .info-card { background: #fff; border-radius: 10px; box-shadow: 0 2px 12px rgba(9,22,45,0.04); padding: 0 24px; flex: 1; }
+  .info-card.left { flex: 0 0 520px; }
+  .info-row { display: flex; align-items: center; min-height: 60px; border-bottom: 1px solid #cbd5e1; }
+  .info-row:last-child { border-bottom: none; }
+  .info-label { width: 160px; flex-shrink: 0; font-size: 14px; font-weight: 500; color: #647188; }
+  .info-value { font-size: 14px; font-weight: 600; color: #253858; display: flex; align-items: center; gap: 8px; }
+  .info-value.green { color: #36b37e; }
+  .info-value.muted { font-weight: 500; color: #647188; }
+  .info-value.blue { color: #2684ff; font-weight: 500; cursor: pointer; }
+  .info-row-between { justify-content: space-between; }
+  .copy-btn { width: 16px; height: 16px; cursor: pointer; opacity: 0.5; display: inline-flex; }
+  .copy-btn svg { width: 16px; height: 16px; }
+  .info-sub { font-size: 14px; font-weight: 500; color: #647188; }
+  .coupon-input { border: 1px solid #dee1e5; border-radius: 6px; padding: 9px 12px; font-size: 12px; font-weight: 500; color: #253858; width: 160px; font-family: 'Montserrat', sans-serif; outline: none; }
+  .coupon-input:focus { border-color: #a8ceff; }
+  .apply-btn { border: 1.5px solid #a8ceff; background: #fff; border-radius: 6px; padding: 7px 16px; font-size: 12px; font-weight: 600; color: #253858; font-family: 'Montserrat', sans-serif; text-transform: uppercase; cursor: pointer; letter-spacing: 0.02em; white-space: nowrap; }
+  .apply-btn:hover { background: #f0f7ff; }
+  .right-col { display: flex; flex-direction: column; gap: 24px; flex: 1; min-width: 0; }
+  .info-card-sm { background: #fff; border-radius: 10px; box-shadow: 0 2px 12px rgba(9,22,45,0.04); padding: 0 24px; }
+
+  /* ── SEATS SECTION ── */
+  .seats-header { display: flex; align-items: center; gap: 20px; }
+  .seats-title { font-size: 20px; font-weight: 600; color: #253858; }
+  .seats-total { font-size: 14px; font-weight: 600; color: #253858; }
+  .seats-warning { display: flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 500; color: #647188; }
+  .warn-icon { width: 16px; height: 16px; }
+
+  /* ── TABLE ── */
+  .table-card { background: #fff; border-radius: 10px; box-shadow: 0 2px 12px rgba(9,22,45,0.04); padding: 0 24px 16px; }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { border-bottom: 1px solid #cbd5e1; height: 56px; }
+  th { font-size: 14px; font-weight: 600; color: #253858; text-align: center; padding: 10px; }
+  th:first-child { text-align: left; width: 200px; }
+  th.col-added { text-align: left; width: 180px; }
+  tbody tr { border-bottom: 1px solid #cbd5e1; height: 56px; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr.stripe { background: #f8f8f8; }
+  td { font-size: 12px; font-weight: 500; color: #253858; padding: 8px 10px; text-align: center; vertical-align: middle; }
+  td:first-child { text-align: left; }
+  td.col-added { text-align: left; font-size: 12px; font-weight: 500; color: #253858; }
+  .acct-cell { display: flex; align-items: center; gap: 8px; }
+  .acct-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+  .acct-name { font-size: 12px; font-weight: 600; color: #253858; }
+  .status-active { color: #36b37e; font-weight: 600; }
+  .status-disconnected { color: #e8344d; font-weight: 600; }
+  .status-empty { color: #fda959; font-weight: 600; }
+  .status-unassigned { color: #8e8e8e; font-weight: 600; }
+  .status-assigned { color: #36b37e; font-weight: 600; }
+  .action-btn { background: none; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; }
+  .action-btn:hover { background: #f0f0f0; }
+  .plus-btn { color: #2684ff; font-size: 20px; font-weight: 300; }
+  .sort-icon { display: inline-flex; align-items: center; margin-left: 4px; opacity: 0.5; }
+  .th-inner { display: inline-flex; align-items: center; gap: 4px; }
+
+  /* ── PAGINATION ── */
+  .pagination { display: flex; align-items: center; gap: 12px; justify-content: center; padding-top: 12px; }
+  .page-arrow { width: 36px; height: 36px; border: 1px solid #dee1e5; border-radius: 6px; background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .page-arrow:hover { background: #f8f8f8; }
+  .page-num { width: 36px; height: 36px; border-radius: 6px; background: #2684ff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: #fff; }
+
+  /* ── CANCEL ZONE ── */
+  .cancel-zone { background: #fff; border-radius: 10px; box-shadow: 0 2px 12px rgba(9,22,45,0.04); padding: 24px; display: flex; align-items: center; gap: 32px; }
+  .cancel-hint { font-size: 14px; font-weight: 500; color: #647188; white-space: nowrap; }
+  .cancel-link { font-size: 14px; font-weight: 500; color: #e8344d; background: none; border: none; cursor: pointer; font-family: 'Montserrat', sans-serif; white-space: nowrap; }
+  .cancel-link:hover { text-decoration: underline; }
+
+  /* ── DROPDOWN MENUS ── */
+  .dropdown { background: #fff; border: 1px solid #efefef; border-radius: 4px; box-shadow: 4px 3px 7px rgba(123,123,123,0.1); position: absolute; z-index: 10; right: 0; min-width: 139px; display: none; }
+  .dropdown.open { display: block; }
+  .dropdown-item { padding: 12px 16px; font-size: 14px; font-weight: 500; color: #253858; white-space: nowrap; cursor: pointer; }
+  .dropdown-item:hover { background: #f8f8f8; }
+  .dropdown-item.danger { color: #e8344d; }
+  .action-wrap { position: relative; display: inline-flex; justify-content: center; }
+</style>
+</head>
+<body>
+
+<!-- LEFT NAV -->
+<nav class="nav">
+  <div class="nav-logo">
+    <svg width="160" height="32" viewBox="0 0 160 32" fill="none">
+      <rect width="32" height="32" rx="6" fill="#2684FF"/>
+      <path d="M8 16C8 11.58 11.58 8 16 8C18.21 8 20.21 8.9 21.66 10.34L19.54 12.46C18.64 11.54 17.39 11 16 11C13.24 11 11 13.24 11 16C11 18.76 13.24 21 16 21C18.55 21 20.66 19.12 21 16.7H16V14H24V16C24 20.42 20.42 24 16 24C11.58 24 8 20.42 8 16Z" fill="white"/>
+      <text x="40" y="21" font-family="Montserrat, sans-serif" font-weight="700" font-size="14" fill="#253858">salesflow</text>
+    </svg>
+  </div>
+
+  <div class="nav-user">
+    <div style="position:relative;width:60px;height:60px;">
+      <div style="width:60px;height:60px;border-radius:50%;background:#c7d6e8;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;color:#fff;">MR</div>
+    </div>
+    <div class="nav-user-status">Active</div>
+    <div class="nav-user-name">Michaelle Ronalds | Entrepreneur, TEDx Speaker</div>
+    <div class="nav-user-meta">IT Business Analyst – IT Company<br><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="8ae7e3e9e2ebefe6e6efa4f8e5e4ebe6eef9caede7ebe3e6a4e9e5e7">[email&#160;protected]</a></div>
+  </div>
+
+  <div class="nav-item"><div class="selector"></div><div class="nav-item-inner"><span class="nav-item-label">Home</span></div></div>
+  <div class="nav-item"><div class="selector"></div><div class="nav-item-inner"><span class="nav-item-label">Analytics</span></div></div>
+  <div class="nav-item"><div class="selector"></div><div class="nav-item-inner"><span class="nav-item-label">Campaigns</span></div></div>
+  <div class="nav-item"><div class="selector"></div><div class="nav-item-inner"><span class="nav-item-label">Templates</span></div><svg class="nav-item-arrow" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="#929bab" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="nav-item"><div class="selector"></div><div class="nav-item-inner"><span class="nav-item-label">Integrations</span></div><svg class="nav-item-arrow" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="#929bab" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="nav-item"><div class="selector"></div><div class="nav-item-inner"><span class="nav-item-label">Inbox</span></div></div>
+  <div class="nav-item active">
+    <div class="selector"></div>
+    <div class="nav-item-inner"><span class="nav-item-label">Settings</span></div>
+    <svg class="nav-item-arrow" viewBox="0 0 16 16" fill="none"><path d="M4 10l4-4 4 4" stroke="#2684ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+  <div class="nav-submenu">
+    <div class="nav-subitem">User Settings</div>
+    <div class="nav-subitem">LinkedIn Account Settings</div>
+    <div class="nav-subitem active">Subscription Settings</div>
+  </div>
+  <div class="nav-item"><div class="selector"></div><div class="nav-item-inner"><span class="nav-item-label">Blacklists</span></div></div>
+  <div class="nav-item"><div class="selector"></div><div class="nav-item-inner"><span class="nav-item-label">Help</span></div></div>
+  <div class="nav-section-label">Admin Menu</div>
+  <div class="nav-item"><div class="selector"></div><div class="nav-item-inner"><span class="nav-item-label">Team Management</span></div></div>
+  <div class="nav-item"><div class="selector"></div><div class="nav-item-inner"><span class="nav-item-label">Team Management</span></div></div>
+  <div class="nav-item"><div class="selector"></div><div class="nav-item-inner"><span class="nav-item-label">Global Dashboard (50)</span></div></div>
+  <div class="nav-bottom">
+    <div class="nav-item"><div class="selector"></div><div class="nav-item-inner"><span class="nav-item-label">Log Out</span></div></div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div style="width:32px;height:32px;border-radius:50%;background:#c7d6e8;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;">MR</div>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-left:4px;"><path d="M4 6l4 4 4-4" stroke="#929bab" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+
+  <div class="content">
+    <!-- TABS -->
+    <div class="tabs-card">
+      <div class="tabs">
+        <div class="tab active">
+          <div class="tab-label">Subscription Info</div>
+          <div class="tab-indicator"></div>
+        </div>
+        <a href="manage-seats-plan.html" class="tab" style="text-decoration:none;">
+          <div class="tab-label">Manage Seats &amp; Plan</div>
+          <div class="tab-indicator"></div>
+        </a>
+        <div class="tab">
+          <div class="tab-label">Invoices</div>
+          <div class="tab-indicator"></div>
+        </div>
+        <div class="tab">
+          <div class="tab-label">Payment Method</div>
+          <div class="tab-indicator"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARDS ROW -->
+    <div class="cards-row">
+      <!-- LEFT: General billing info -->
+      <div class="info-card left">
+        <div class="info-row">
+          <div class="info-label">Payment plan</div>
+          <div class="info-value">Starter, 7 seats&nbsp;<span class="info-sub">= 5 fixed + 2 additional</span></div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">Payment Status</div>
+          <div class="info-value green">Active</div>
+        </div>
+        <div class="info-row info-row-between">
+          <div style="display:flex;align-items:center;">
+            <div class="info-label">Billing frequency</div>
+            <div class="info-value">Monthly</div>
+          </div>
+          <div class="info-value blue">Change</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">Next billing amount</div>
+          <div class="info-value">$490&nbsp;<span class="info-sub">excl. VAT</span></div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">Next billing date</div>
+          <div class="info-value">14 Apr, 2026</div>
+        </div>
+      </div>
+
+      <!-- RIGHT col -->
+      <div class="right-col">
+        <!-- Subscription ID + Credits -->
+        <div class="info-card-sm">
+          <div class="info-row">
+            <div class="info-label">Subscription ID</div>
+            <div class="info-value" style="gap:10px;">
+              Azz5YdVCoTVwz1W8n
+              <span class="copy-btn">
+                <svg viewBox="0 0 16 16" fill="none" stroke="#929bab" stroke-width="1.5"><rect x="5" y="5" width="8" height="8" rx="1.5"/><path d="M3 11V3h8"/></svg>
+              </span>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Credits</div>
+            <div class="info-value" style="gap:4px;">
+              23
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#929bab" stroke-width="1.2"/><text x="6" y="9" text-anchor="middle" font-size="7" fill="#929bab" font-family="Montserrat,sans-serif" font-weight="600">i</text></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Coupon -->
+        <div class="info-card-sm">
+          <div class="info-row">
+            <div class="info-label">Coupon Code</div>
+            <div style="display:flex;align-items:center;gap:16px;">
+              <input class="coupon-input" value="JFJD883022NJJ" />
+              <button class="apply-btn">Apply code</button>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Coupon claim expires</div>
+            <div class="info-value">01 Feb 2026</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Redemptions left</div>
+            <div class="info-value">30</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEATS SECTION -->
+    <div style="display:flex;flex-direction:column;gap:24px;">
+      <div class="seats-header">
+        <span class="seats-title">Assigned Seats</span>
+        <span class="seats-total">Total 7 Seats</span>
+        <div class="seats-warning">
+          <svg class="warn-icon" viewBox="0 0 16 16" fill="none"><path d="M8 2L14.93 14H1.07L8 2Z" stroke="#fda959" stroke-width="1.4" stroke-linejoin="round"/><line x1="8" y1="7" x2="8" y2="10" stroke="#fda959" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="12" r="0.6" fill="#fda959"/></svg>
+          2 seats Unassigned
+        </div>
+      </div>
+
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align:left;">Accounts</th>
+              <th class="col-added" style="text-align:left;">
+                <span class="th-inner">Account Added
+                  <svg class="sort-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3v8M4 6l3-3 3 3M4 8l3 3 3-3" stroke="#253858" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+              </th>
+              <th>Account<br>Status</th>
+              <th>Seat<br>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="stripe">
+              <td><span style="font-weight:600;">Empty Seat</span></td>
+              <td class="col-added">none</td>
+              <td><span class="status-empty">Empty</span></td>
+              <td><span class="status-unassigned">Unassigned</span></td>
+              <td>
+                <div class="action-wrap" id="wrap1">
+                  <button class="action-btn plus-btn" onclick="toggleDropdown('dd1', event)">+</button>
+                  <div class="dropdown" id="dd1">
+                    <div class="dropdown-item">Assign Account</div>
+                    <div class="dropdown-item danger">Cancel Seat</div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><span style="font-weight:600;">Empty Seat</span></td>
+              <td class="col-added">none</td>
+              <td><span class="status-empty">Empty</span></td>
+              <td><span class="status-unassigned">Unassigned</span></td>
+              <td>
+                <div class="action-wrap">
+                  <button class="action-btn plus-btn">+</button>
+                </div>
+              </td>
+            </tr>
+            <tr class="">
+              <td>
+                <div class="acct-cell">
+                  <div style="width:32px;height:32px;border-radius:50%;background:#d1e4f5;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#2684ff;flex-shrink:0;">JJ</div>
+                  <span class="acct-name">Jacob Jones</span>
+                </div>
+              </td>
+              <td class="col-added">08 Mar, 2026 9:45PM</td>
+              <td><span class="status-disconnected">Disconnected</span></td>
+              <td><span class="status-assigned">Assigned</span></td>
+              <td>
+                <div class="action-wrap">
+                  <button class="action-btn" onclick="toggleDropdown('dd3', event)">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="4" r="1.5" fill="#647188"/><circle cx="10" cy="10" r="1.5" fill="#647188"/><circle cx="10" cy="16" r="1.5" fill="#647188"/></svg>
+                  </button>
+                  <div class="dropdown" id="dd3">
+                    <div class="dropdown-item">Switch Account</div>
+                    <div class="dropdown-item danger">Delete Account</div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr class="stripe">
+              <td>
+                <div class="acct-cell">
+                  <div style="width:32px;height:32px;border-radius:50%;background:#fce8d5;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#e07a30;flex-shrink:0;">RE</div>
+                  <span class="acct-name">Ralph Edwards</span>
+                </div>
+              </td>
+              <td class="col-added">08 Mar, 2026 9:45PM</td>
+              <td><span class="status-active">Active</span></td>
+              <td><span class="status-assigned">Assigned</span></td>
+              <td>
+                <div class="action-wrap">
+                  <button class="action-btn">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="4" r="1.5" fill="#647188"/><circle cx="10" cy="10" r="1.5" fill="#647188"/><circle cx="10" cy="16" r="1.5" fill="#647188"/></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="acct-cell">
+                  <div style="width:32px;height:32px;border-radius:50%;background:#d5ede2;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#2b8a57;flex-shrink:0;">TW</div>
+                  <span class="acct-name">Theresa Webb</span>
+                </div>
+              </td>
+              <td class="col-added">08 Mar, 2026 9:45PM</td>
+              <td><span class="status-active">Active</span></td>
+              <td><span class="status-assigned">Assigned</span></td>
+              <td>
+                <div class="action-wrap" id="wrap5">
+                  <button class="action-btn" onclick="toggleDropdown('dd5', event)">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="4" r="1.5" fill="#647188"/><circle cx="10" cy="10" r="1.5" fill="#647188"/><circle cx="10" cy="16" r="1.5" fill="#647188"/></svg>
+                  </button>
+                  <div class="dropdown" id="dd5">
+                    <div class="dropdown-item danger">Delete Account</div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr class="stripe">
+              <td>
+                <div class="acct-cell">
+                  <div style="width:32px;height:32px;border-radius:50%;background:#c7d6e8;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#2684ff;flex-shrink:0;">MR</div>
+                  <span class="acct-name">Michaelle Ro...</span>
+                </div>
+              </td>
+              <td class="col-added">08 Mar, 2026 9:45PM</td>
+              <td><span class="status-active">Active</span></td>
+              <td><span class="status-assigned">Assigned</span></td>
+              <td>
+                <div class="action-wrap">
+                  <button class="action-btn">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="4" r="1.5" fill="#647188"/><circle cx="10" cy="10" r="1.5" fill="#647188"/><circle cx="10" cy="16" r="1.5" fill="#647188"/></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="acct-cell">
+                  <div style="width:32px;height:32px;border-radius:50%;background:#e8d5f5;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#7b3fb5;flex-shrink:0;">KL</div>
+                  <span class="acct-name">Ketty Lilson</span>
+                </div>
+              </td>
+              <td class="col-added">08 Mar, 2026 9:45PM</td>
+              <td><span class="status-active">Active</span></td>
+              <td><span class="status-assigned">Assigned</span></td>
+              <td>
+                <div class="action-wrap">
+                  <button class="action-btn">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="4" r="1.5" fill="#647188"/><circle cx="10" cy="10" r="1.5" fill="#647188"/><circle cx="10" cy="16" r="1.5" fill="#647188"/></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="pagination">
+          <button class="page-arrow">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="#929bab" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="page-num">1</div>
+          <button class="page-arrow">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="#929bab" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CANCEL ZONE -->
+    <div class="cancel-zone">
+      <span class="cancel-hint">Need to leave? You can cancel your subscription at any time</span>
+      <button class="cancel-link">Cancel Subscription</button>
+    </div>
+
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  function toggleDropdown(id, e) {
+    e.stopPropagation();
+    document.querySelectorAll('.dropdown').forEach(d => {
+      if (d.id !== id) d.classList.remove('op

@@ -1,0 +1,233 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.sf{font-family:'Montserrat',-apple-system,sans-serif;background:#f8f8f8;display:flex;min-height:680px;border-radius:10px;overflow:hidden;border:1px solid #e5e7eb}
+.page-bg{flex:1;padding:24px;display:flex;flex-direction:column;gap:16px;opacity:0.35;pointer-events:none;user-select:none}
+.page-card{background:#fff;border-radius:10px;border:1px solid #e5e7eb;padding:20px 24px}
+.page-title{font-size:13px;font-weight:600;color:#253858;margin-bottom:12px}
+.changes-row{display:flex;justify-content:space-between;font-size:12px;color:#647188;padding:6px 0;border-bottom:1px solid #f0f0f0}
+.changes-row:last-child{border-bottom:none}
+.changes-val{font-weight:600;color:#253858}
+.confirm-btn{background:#2684ff;color:#fff;border:none;border-radius:6px;padding:10px 24px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:12px}
+.drawer{width:580px;background:#fff;border-left:1px solid #e5e7eb;display:flex;flex-direction:column;flex-shrink:0}
+.drawer-header{padding:20px 24px 16px;border-bottom:1px solid #e5e7eb;flex-shrink:0}
+.drawer-title{font-size:16px;font-weight:600;color:#253858;margin-bottom:4px}
+.drawer-sub{font-size:13px;color:#647188}
+.counter-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:#fff8f0;border-bottom:1px solid #fde8c8;flex-shrink:0}
+.counter-text{font-size:13px;font-weight:600;color:#253858}
+.counter-badge{font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px;background:#fde8c8;color:#c05c00}
+.counter-badge.done{background:#d5ede2;color:#1a6b45}
+.filter-bar{display:flex;gap:8px;padding:12px 24px;border-bottom:1px solid #e5e7eb;flex-shrink:0;flex-wrap:wrap}
+.filter-btn{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;border:1px solid #dee1e5;background:#fff;color:#647188;cursor:pointer;font-family:inherit}
+.filter-btn.active{background:#e9f2ff;border-color:#a8ceff;color:#2684ff}
+.group-label{font-size:10px;font-weight:600;color:#929bab;letter-spacing:0.06em;text-transform:uppercase;padding:10px 24px 4px;background:#f8f8f8;border-bottom:1px solid #e5e7eb}
+.table-wrap{flex:1;overflow-y:auto;max-height:380px}
+.row{display:flex;align-items:center;height:52px;padding:0 24px;border-bottom:1px solid #e5e7eb;cursor:pointer;transition:background 0.1s}
+.row:hover{background:#fafafa}
+.row.selected{background:#fff3f0}
+.row.selected:hover{background:#fff0ec}
+.row.pre-selected{background:#fff8f5}
+.cb{width:16px;height:16px;border-radius:3px;border:1.5px solid #dee1e5;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-right:12px;transition:all 0.1s}
+.cb.checked{background:#e8344d;border-color:#e8344d}
+.cb.checked svg{display:block}
+.cb svg{display:none;width:10px;height:10px}
+.avatar{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;margin-right:8px}
+.acct-name{font-size:12px;font-weight:500;color:#253858;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acct-date{font-size:11px;color:#929bab;margin-right:16px;white-space:nowrap}
+.status-pill{font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;white-space:nowrap}
+.s-empty{color:#fda959}
+.s-disconnected{color:#e8344d}
+.s-active{color:#36b37e}
+.drawer-footer{padding:16px 24px;border-top:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:#fff}
+.footer-info{font-size:12px;color:#647188}
+.footer-info strong{color:#253858}
+.btn-cancel{background:none;border:1px solid #dee1e5;border-radius:6px;padding:8px 18px;font-size:12px;font-weight:600;color:#647188;cursor:pointer;font-family:inherit}
+.btn-confirm{background:#2684ff;border:none;border-radius:6px;padding:8px 18px;font-size:12px;font-weight:600;color:#fff;cursor:pointer;font-family:inherit}
+.btn-confirm:disabled{background:#b3b9c5;cursor:not-allowed}
+.btn-confirm.danger{background:#e8344d}
+.warning-banner{display:flex;align-items:center;gap:8px;padding:10px 24px;background:#fff8f0;border-bottom:1px solid #fde8c8;font-size:12px;color:#c05c00;font-weight:500;flex-shrink:0}
+</style>
+
+<div class="sf">
+  <div class="page-bg">
+    <div class="page-card">
+      <div class="page-title">Changes summary</div>
+      <div class="changes-row"><span>Plan</span><span class="changes-val">Pro → Starter</span></div>
+      <div class="changes-row"><span>Seats</span><span class="changes-val">25 → 10</span></div>
+      <div class="changes-row"><span>Next billing</span><span class="changes-val">$700/mo</span></div>
+      <div class="changes-row"><span>Effective from</span><span class="changes-val">01 May, 2026</span></div>
+      <button class="confirm-btn">Confirm changes</button>
+    </div>
+  </div>
+
+  <div class="drawer">
+    <div class="drawer-header">
+      <div class="drawer-title">Select accounts to remove</div>
+      <div class="drawer-sub">You're reducing from 25 to 10 seats. Select <strong id="need-count" style="color:#253858">15 accounts</strong> to remove.</div>
+    </div>
+
+    <div class="counter-bar">
+      <span class="counter-text" id="counter-text">Selected for removal: <span id="sel-count">5</span> of 15</span>
+      <span class="counter-badge" id="counter-badge">10 more needed</span>
+    </div>
+
+    <div id="warning-banner" style="display:none" class="warning-banner">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1.5L13 12H1L7 1.5Z" stroke="#c05c00" stroke-width="1.3" stroke-linejoin="round"/><line x1="7" y1="6" x2="7" y2="9" stroke="#c05c00" stroke-width="1.3" stroke-linecap="round"/><circle cx="7" cy="10.5" r="0.6" fill="#c05c00"/></svg>
+      Too many selected — deselect some accounts
+    </div>
+
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="setFilter('all',this)">All accounts</button>
+      <button class="filter-btn" onclick="setFilter('empty',this)">Empty seats</button>
+      <button class="filter-btn" onclick="setFilter('disconnected',this)">Disconnected</button>
+      <button class="filter-btn" onclick="setFilter('active',this)">Active</button>
+      <button class="filter-btn" onclick="setFilter('selected',this)">Selected only</button>
+    </div>
+
+    <div class="table-wrap" id="table-wrap"></div>
+
+    <div class="drawer-footer">
+      <div class="footer-info">Removing <strong id="footer-sel">5</strong> accounts · <strong id="footer-rem">20</strong> will remain</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-cancel">Cancel</button>
+        <button class="btn-confirm danger" id="confirm-btn" disabled>Confirm removal</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const NEED = 15;
+const TOTAL_SEATS = 25;
+
+const accounts = [
+  {id:1,name:'Empty Seat',date:'–',status:'empty',group:'suggested',preSelected:true},
+  {id:2,name:'Empty Seat',date:'–',status:'empty',group:'suggested',preSelected:true},
+  {id:3,name:'Empty Seat',date:'–',status:'empty',group:'suggested',preSelected:true},
+  {id:4,name:'Jacob Jones',date:'08 Mar, 2026',status:'disconnected',group:'suggested',preSelected:true},
+  {id:5,name:'Anna Kovalenko',date:'12 Jan, 2026',status:'disconnected',group:'suggested',preSelected:true},
+  {id:6,name:'Ralph Edwards',date:'08 Mar, 2026',status:'active',group:'active',preSelected:false},
+  {id:7,name:'Theresa Webb',date:'08 Mar, 2026',status:'active',group:'active',preSelected:false},
+  {id:8,name:'Michaelle Ronalds',date:'08 Mar, 2026',status:'active',group:'active',preSelected:false},
+  {id:9,name:'Ketty Lilson',date:'08 Mar, 2026',status:'active',group:'active',preSelected:false},
+  {id:10,name:'David Kim',date:'15 Feb, 2026',status:'active',group:'active',preSelected:false},
+  {id:11,name:'Sarah Connor',date:'20 Jan, 2026',status:'active',group:'active',preSelected:false},
+  {id:12,name:'Mike Torres',date:'03 Mar, 2026',status:'active',group:'active',preSelected:false},
+  {id:13,name:'Elena Müller',date:'28 Feb, 2026',status:'active',group:'active',preSelected:false},
+  {id:14,name:'James Park',date:'10 Mar, 2026',status:'active',group:'active',preSelected:false},
+  {id:15,name:'Liu Wei',date:'22 Feb, 2026',status:'active',group:'active',preSelected:false},
+];
+
+let selected = new Set(accounts.filter(a=>a.preSelected).map(a=>a.id));
+let currentFilter = 'all';
+
+const avatarColors = [
+  ['#d1e4f5','#2684ff'],['#d5ede2','#2b8a57'],['#fce8d5','#e07a30'],
+  ['#e8d5f5','#7b3fb5'],['#fde8e8','#c0392b'],['#e8f5e9','#388e3c'],
+  ['#fff3e0','#e65100'],['#e3f2fd','#1565c0'],
+];
+
+function getInitials(name){
+  if(name==='Empty Seat') return '–';
+  return name.split(' ').map(w=>w[0]).slice(0,2).join('');
+}
+
+function toggle(id){
+  if(selected.has(id)) selected.delete(id);
+  else selected.add(id);
+  render();
+}
+
+function setFilter(f, btn){
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function render(){
+  const sel = selected.size;
+  const need = NEED;
+  const over = sel > need;
+  const done = sel === need;
+
+  document.getElementById('sel-count').textContent = sel;
+  document.getElementById('footer-sel').textContent = sel;
+  document.getElementById('footer-rem').textContent = TOTAL_SEATS - sel;
+
+  const badge = document.getElementById('counter-badge');
+  const warn = document.getElementById('warning-banner');
+  const confirmBtn = document.getElementById('confirm-btn');
+
+  if(over){
+    badge.textContent = (sel - need) + ' too many';
+    badge.className = 'counter-badge';
+    badge.style.background = '#fde8e8';
+    badge.style.color = '#c0392b';
+    warn.style.display = 'flex';
+    confirmBtn.disabled = true;
+  } else if(done){
+    badge.textContent = 'Ready to confirm';
+    badge.className = 'counter-badge done';
+    badge.style.background = '';
+    badge.style.color = '';
+    warn.style.display = 'none';
+    confirmBtn.disabled = false;
+  } else {
+    badge.textContent = (need - sel) + ' more needed';
+    badge.className = 'counter-badge';
+    badge.style.background = '#fde8c8';
+    badge.style.color = '#c05c00';
+    warn.style.display = 'none';
+    confirmBtn.disabled = true;
+  }
+
+  const wrap = document.getElementById('table-wrap');
+  let filtered = accounts;
+  if(currentFilter === 'empty') filtered = accounts.filter(a=>a.status==='empty');
+  else if(currentFilter === 'disconnected') filtered = accounts.filter(a=>a.status==='disconnected');
+  else if(currentFilter === 'active') filtered = accounts.filter(a=>a.status==='active');
+  else if(currentFilter === 'selected') filtered = accounts.filter(a=>selected.has(a.id));
+
+  let html = '';
+  const suggested = filtered.filter(a=>a.group==='suggested');
+  const active = filtered.filter(a=>a.group==='active');
+
+  if(suggested.length && currentFilter==='all'){
+    html += '<div class="group-label">Suggested to remove · Empty & disconnected</div>';
+    suggested.forEach(a => html += rowHtml(a));
+  }
+  if(active.length && currentFilter==='all'){
+    html += '<div class="group-label">Active accounts</div>';
+    active.forEach(a => html += rowHtml(a));
+  }
+  if(currentFilter !== 'all'){
+    filtered.forEach(a => html += rowHtml(a));
+  }
+
+  wrap.innerHTML = html;
+  wrap.querySelectorAll('.row').forEach(row=>{
+    row.addEventListener('click',()=>toggle(+row.dataset.id));
+  });
+}
+
+function rowHtml(a){
+  const isSel = selected.has(a.id);
+  const isPre = a.preSelected && !isSel ? false : a.preSelected;
+  const cls = isSel ? 'row selected' : (a.preSelected ? 'row pre-selected' : 'row');
+  const cbCls = isSel ? 'cb checked' : 'cb';
+  const [bg, fg] = avatarColors[a.id % avatarColors.length];
+  const initials = getInitials(a.name);
+  const statusMap = {empty:'s-empty',disconnected:'s-disconnected',active:'s-active'};
+  const statusLabel = {empty:'Empty',disconnected:'Disconnected',active:'Active'};
+  return `<div class="${cls}" data-id="${a.id}">
+    <div class="${cbCls}"><svg viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="avatar" style="background:${bg};color:${fg}">${initials}</div>
+    <span class="acct-name">${a.name}</span>
+    <span class="acct-date">${a.date}</span>
+    <span class="status-pill ${statusMap[a.status]}">${statusLabel[a.status]}</span>
+  </div>`;
+}
+
+render();
+</script>

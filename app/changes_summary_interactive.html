@@ -1,0 +1,234 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.wrap{font-family:'Montserrat',-apple-system,sans-serif;background:#f8f8f8;padding:20px;border-radius:10px}
+.controls{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.ctrl-label{font-size:11px;font-weight:600;color:#929bab;text-transform:uppercase;letter-spacing:0.05em;margin-right:4px}
+.ctrl-btn{font-size:12px;font-weight:600;padding:6px 14px;border-radius:20px;border:1px solid #dee1e5;background:#fff;color:#647188;cursor:pointer;font-family:inherit;transition:all 0.1s}
+.ctrl-btn.active{background:#e9f2ff;border-color:#a8ceff;color:#2684ff}
+.divider-v{width:1px;height:24px;background:#e5e7eb;margin:0 4px}
+.card{background:#fff;border-radius:10px;border:1px solid #e5e7eb;overflow:hidden;max-width:560px}
+.card-header{padding:16px 20px 12px;border-bottom:1px solid #f0f0f0}
+.card-hl{font-size:10px;font-weight:600;color:#253858;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px}
+.plan-row{display:flex;align-items:center;gap:10px}
+.plan-badge{background:#e7edf7;border-radius:100px;padding:5px 10px;font-size:13px;font-weight:600;color:#134bb7}
+.plan-info{font-size:13px;font-weight:500;color:#647188}
+.plan-info strong{color:#253858;font-weight:600}
+.plan-sep{color:#cbd5e1}
+.block{padding:16px 20px;border-bottom:1px solid #f0f0f0}
+.block:last-child{border-bottom:none}
+.block-label{font-size:10px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.block-label.blue{color:#185fa5}
+.block-label.green{color:#0f6e56}
+.block-label.gray{color:#5f5e5a}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot.blue{background:#2684ff}
+.dot.green{background:#36b37e}
+.dot.gray{background:#929bab}
+.line-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+.line-desc{font-size:13px;font-weight:500;color:#647188;flex:1}
+.line-desc small{font-size:11px;color:#929bab;display:block;margin-top:1px}
+.line-amount{font-size:13px;font-weight:600;color:#253858;white-space:nowrap;margin-left:16px}
+.line-amount.green{color:#0f6e56}
+.line-amount.muted{color:#929bab;font-weight:500}
+.total-row{display:flex;justify-content:space-between;align-items:baseline;padding-top:8px;margin-top:8px;border-top:1px solid #f0f0f0}
+.total-label{font-size:12px;font-weight:500;color:#647188}
+.total-amount{font-size:15px;font-weight:700;color:#253858}
+.total-amount.green{color:#0f6e56}
+.block.green-bg{background:#eaf7f2}
+.block.blue-bg{background:#f0f6ff}
+.block.gray-bg{background:#f8f8f8}
+.no-charge{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:#5f5e5a;padding:4px 0}
+.no-charge-icon{width:18px;height:18px;border-radius:50%;border:1.5px solid #b4b2a9;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.credit-badge{display:inline-flex;align-items:center;gap:4px;background:#d5ede2;color:#085041;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600}
+.confirm-row{padding:16px 20px;display:flex;justify-content:flex-end}
+.confirm-btn{background:#2684ff;color:#fff;border:none;border-radius:6px;padding:10px 24px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer}
+</style>
+
+<div class="wrap">
+  <div class="controls">
+    <span class="ctrl-label">Сценарій:</span>
+    <button class="ctrl-btn active" onclick="setScenario('upgrade',this)">Upgrade (більше seats)</button>
+    <button class="ctrl-btn" onclick="setScenario('same',this)">Same plan (більше seats)</button>
+    <button class="ctrl-btn" onclick="setScenario('downgrade',this)">Downgrade (менше seats)</button>
+    <button class="ctrl-btn" onclick="setScenario('billing',this)">Зміна billing period</button>
+  </div>
+
+  <div class="card" id="summary-card"></div>
+</div>
+
+<script>
+const scenarios = {
+  upgrade: {
+    plan:'Pro', seats:20, billing:'Monthly', price:'$39.95',
+    blocks:[
+      {
+        type:'pay-now', label:'Pay now', color:'blue',
+        lines:[
+          {desc:'13 new seats × $39.95 × 17/30 days', sub:'Prorated for remaining days', amount:'$285.64'},
+          {desc:'Upgrade from Starter', sub:'', amount:null}
+        ],
+        total:'$285.64'
+      },
+      {
+        type:'next', label:'From next billing cycle', color:'gray',
+        lines:[
+          {desc:'20 seats × $39.95/seat', sub:'Starting 14 Apr, 2026', amount:'$799/mo'}
+        ],
+        total:null
+      }
+    ]
+  },
+  same: {
+    plan:'Starter', seats:12, billing:'Monthly', price:'$70',
+    blocks:[
+      {
+        type:'pay-now', label:'Pay now', color:'blue',
+        lines:[
+          {desc:'5 new seats × $70 × 11/31 days', sub:'Prorated for remaining days', amount:'$124.19'},
+        ],
+        total:'$124.19'
+      },
+      {
+        type:'next', label:'From next billing cycle', color:'gray',
+        lines:[
+          {desc:'12 seats × $70/seat', sub:'Starting 14 Apr, 2026', amount:'$840/mo'}
+        ],
+        total:null
+      }
+    ]
+  },
+  downgrade: {
+    plan:'Starter', seats:4, billing:'Monthly', price:'$70',
+    blocks:[
+      {
+        type:'no-charge', label:'Pay now', color:'gray',
+        noCharge:'No charge — change takes effect next cycle'
+      },
+      {
+        type:'credit', label:'Credits added to your account', color:'green',
+        lines:[
+          {desc:'3 removed seats × $70 × 20/31 days', sub:'Unused days refunded as credits', amount:'+$135.48'}
+        ],
+        total:'+$135.48',
+        totalNote:'Available immediately for future charges'
+      },
+      {
+        type:'next', label:'From next billing cycle', color:'gray',
+        lines:[
+          {desc:'4 seats × $70/seat', sub:'Starting 14 Apr, 2026', amount:'$280/mo'}
+        ],
+        total:null
+      }
+    ]
+  },
+  billing: {
+    plan:'Starter', seats:7, billing:'12 months', price:'$69.30',
+    blocks:[
+      {
+        type:'pay-now', label:'Pay now', color:'blue',
+        lines:[
+          {desc:'7 seats × $69.30/seat × 20/30 days', sub:'Prorated switch to annual', amount:'$323.40'},
+          {desc:'Credit from current monthly plan', sub:'Remaining 20 days already paid', amount:'−$316.13'}
+        ],
+        total:'$7.27'
+      },
+      {
+        type:'next', label:'From next billing cycle', color:'gray',
+        lines:[
+          {desc:'7 seats × $69.30/seat × 12 months', sub:'Starting 14 Apr, 2026', amount:'$5,821.20/yr'}
+        ],
+        total:null
+      }
+    ]
+  }
+};
+
+let current = 'upgrade';
+
+function setScenario(key, btn) {
+  current = key;
+  document.querySelectorAll('.ctrl-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function render() {
+  const s = scenarios[current];
+  const card = document.getElementById('summary-card');
+
+  let html = `<div class="card-header">
+    <div class="card-hl">Changes summary</div>
+    <div class="plan-row">
+      <div class="plan-badge">${s.plan}</div>
+      <div class="plan-info"><strong>${s.seats} seats</strong></div>
+      <div class="plan-sep">|</div>
+      <div class="plan-info">Billed <strong>${s.billing}</strong></div>
+      <div class="plan-sep">|</div>
+      <div class="plan-info"><strong>${s.price}</strong> /seat/mo</div>
+    </div>
+  </div>`;
+
+  s.blocks.forEach(b => {
+    if (b.type === 'no-charge') {
+      html += `<div class="block gray-bg">
+        <div class="block-label gray"><div class="dot gray"></div>${b.label}</div>
+        <div class="no-charge">
+          <div class="no-charge-icon"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#888780" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          ${b.noCharge}
+        </div>
+      </div>`;
+    } else if (b.type === 'credit') {
+      html += `<div class="block green-bg">
+        <div class="block-label green">
+          <div class="dot green"></div>${b.label}
+          <span class="credit-badge"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#085041" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> credits</span>
+        </div>`;
+      b.lines.forEach(l => {
+        html += `<div class="line-row">
+          <div class="line-desc">${l.desc}<small>${l.sub}</small></div>
+          <div class="line-amount green">${l.amount}</div>
+        </div>`;
+      });
+      if (b.total) {
+        html += `<div class="total-row">
+          <div class="total-label">${b.totalNote || ''}</div>
+          <div class="total-amount green">${b.total}</div>
+        </div>`;
+      }
+      html += `</div>`;
+    } else if (b.type === 'pay-now') {
+      html += `<div class="block blue-bg">
+        <div class="block-label blue"><div class="dot blue"></div>${b.label}</div>`;
+      b.lines.forEach(l => {
+        html += `<div class="line-row">
+          <div class="line-desc">${l.desc}${l.sub ? `<small>${l.sub}</small>` : ''}</div>
+          <div class="line-amount${l.amount && l.amount.startsWith('−') ? ' muted' : ''}">${l.amount || ''}</div>
+        </div>`;
+      });
+      if (b.total) {
+        html += `<div class="total-row">
+          <div class="total-label">Total charged now</div>
+          <div class="total-amount">${b.total}</div>
+        </div>`;
+      }
+      html += `</div>`;
+    } else if (b.type === 'next') {
+      html += `<div class="block">
+        <div class="block-label gray"><div class="dot gray"></div>${b.label}</div>`;
+      b.lines.forEach(l => {
+        html += `<div class="line-row">
+          <div class="line-desc">${l.desc}<small>${l.sub}</small></div>
+          <div class="line-amount">${l.amount}</div>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+  });
+
+  html += `<div class="confirm-row"><button class="confirm-btn">Confirm changes</button></div>`;
+  card.innerHTML = html;
+}
+
+render();
+</script>

@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buy Seats — Interactive Prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy: #0d1b3e;
+  --blue: #1d5bff;
+  --blue-hover: #1548d4;
+  --blue-light: #eef2ff;
+  --green: #00a86b;
+  --green-bg: #f0faf5;
+  --green-border: #86efbf;
+  --amber: #f59e0b;
+  --amber-bg: #fffbeb;
+  --amber-border: #fcd34d;
+  --border: #e2e8f0;
+  --text-primary: #0d1b3e;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --bg: #f1f4f9;
+  --white: #ffffff;
+  --shadow: 0 24px 64px rgba(13,27,62,0.14), 0 4px 16px rgba(13,27,62,0.08);
+  --t: 0.18s cubic-bezier(0.4,0,0.2,1);
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: var(--text-primary);
+}
+
+.modal {
+  background: var(--white);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 640px;
+  overflow: hidden;
+  animation: modalIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes modalIn {
+  from { opacity:0; transform: scale(0.95) translateY(10px); }
+  to   { opacity:1; transform: scale(1) translateY(0); }
+}
+
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+}
+.modal-header h2 { font-size: 17px; font-weight: 700; color: var(--navy); letter-spacing: -0.01em; }
+.close-btn {
+  width: 28px; height: 28px; border: none; background: transparent;
+  cursor: pointer; color: var(--text-muted); border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--t), color var(--t);
+}
+.close-btn:hover { background: var(--bg); color: var(--navy); }
+
+.modal-body { padding: 22px 24px; display: flex; flex-direction: column; gap: 16px; }
+
+/* Bundles */
+.bundles { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; }
+
+.bundle-card {
+  border: 1.5px solid var(--border); border-radius: 10px;
+  padding: 11px 6px 10px; text-align: center; cursor: pointer;
+  transition: border-color var(--t), background var(--t), transform var(--t), box-shadow var(--t);
+  user-select: none;
+  position: relative;
+}
+.bundle-card.locked { opacity: 0.4; cursor: not-allowed; }
+.bundle-card:not(.locked):hover:not(.active) {
+  border-color: #b0c0e0; background: #fafbff; transform: translateY(-1px);
+}
+.bundle-card.active {
+  border-color: var(--blue); background: var(--blue-light);
+  box-shadow: 0 0 0 3px rgba(29,91,255,0.12);
+}
+.b-name { font-size: 11px; font-weight: 700; color: var(--navy); margin-bottom: 3px; }
+.b-price { font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 1px; letter-spacing: -0.02em; }
+.b-seats { font-size: 10px; color: var(--text-muted); }
+.b-per-seat { font-size: 10px; color: var(--text-secondary); margin-top: 3px; font-family: 'DM Mono', monospace; }
+
+/* Hint */
+.per-seat-hint {
+  font-size: 11.5px; color: var(--text-secondary);
+  display: flex; align-items: center; justify-content: space-between; gap: 5px;
+}
+.per-seat-hint b { color: var(--green); font-weight: 600; }
+.per-seat-hint-left { display: flex; align-items: center; gap: 5px; }
+.custom-plan-link {
+  font-size: 11.5px; font-weight: 600; color: var(--blue);
+  text-decoration: none; white-space: nowrap;
+  display: flex; align-items: center; gap: 3px;
+  transition: opacity var(--t);
+  flex-shrink: 0;
+}
+.custom-plan-link:hover { opacity: 0.7; }
+
+/* Tabs */
+.billing-section { display: flex; flex-direction: column; gap: 6px; }
+.billing-tabs { display: flex; border-bottom: 1.5px solid var(--border); }
+.tab {
+  padding: 8px 18px; font-size: 13px; font-weight: 500;
+  color: var(--text-secondary); cursor: pointer;
+  border-bottom: 2px solid transparent; margin-bottom: -1.5px;
+  transition: color var(--t), border-color var(--t); user-select: none;
+}
+.tab.active { color: var(--navy); border-bottom-color: var(--blue); font-weight: 700; }
+.tab:hover:not(.active) { color: var(--navy); }
+
+.save-badge {
+  font-size: 12px; color: var(--green); font-weight: 500;
+  padding: 4px 0 0; min-height: 20px;
+  transition: opacity var(--t);
+}
+
+/* Nudge */
+.nudge-wrap {
+  overflow: hidden;
+  transition: max-height 0.28s ease, opacity 0.2s ease;
+  max-height: 0;
+  opacity: 0;
+}
+.nudge-wrap.visible { max-height: 200px; opacity: 1; }
+
+.upgrade-nudge {
+  border-radius: 10px; padding: 13px 14px;
+  display: flex; align-items: flex-start; gap: 10px;
+  background: var(--green-bg); border: 1.5px solid var(--green-border);
+}
+.nudge-icon { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+.nudge-text { flex: 1; }
+.nudge-title { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 3px; }
+.nudge-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.55; }
+.nudge-cta {
+  display: inline-flex; align-items: center; margin-top: 7px;
+  font-size: 12px; font-weight: 700; color: var(--green);
+  cursor: pointer; gap: 4px;
+  text-decoration: underline; text-underline-offset: 2px;
+  transition: opacity var(--t);
+}
+.nudge-cta:hover { opacity: 0.7; }
+
+/* Summary */
+.summary-card { border: 1.5px solid var(--border); border-radius: 12px; overflow: hidden; }
+
+.summary-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+  transition: background var(--t);
+}
+.summary-row:last-child { border-bottom: none; }
+.summary-row.tinted { background: #f8fafc; }
+
+.row-label {
+  font-size: 13px; color: var(--text-secondary);
+  display: flex; align-items: center; gap: 6px;
+}
+.sublabel { font-size: 11px; color: var(--text-muted); font-weight: 400; }
+
+.row-value {
+  font-size: 14px; font-weight: 600; color: var(--navy);
+  text-align: right; display: flex; align-items: center;
+  gap: 6px; flex-wrap: wrap; justify-content: flex-end;
+}
+.calc {
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  font-weight: 400; color: var(--text-muted);
+}
+
+.tag {
+  display: inline-block; border-radius: 4px;
+  font-size: 10px; font-weight: 700;
+  padding: 1px 6px; letter-spacing: 0.04em;
+}
+.tag-amber { background: var(--amber-bg); color: #d97706; border: 1px solid var(--amber-border); }
+.tag-green { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+
+/* Stepper */
+.stepper {
+  display: flex; align-items: center;
+  border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden;
+}
+.stepper-btn {
+  width: 32px; height: 32px; border: none; background: var(--bg);
+  color: var(--navy); cursor: pointer; font-size: 16px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--t); user-select: none;
+}
+.stepper-btn:hover:not(:disabled) { background: #dde3ee; }
+.stepper-btn:disabled { color: var(--text-muted); cursor: not-allowed; }
+.stepper-val {
+  width: 44px; text-align: center; font-size: 14px; font-weight: 700;
+  color: var(--navy); border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border); line-height: 32px;
+  font-family: 'DM Mono', monospace;
+}
+
+/* Coupon */
+.coupon-row {
+  display: flex; gap: 8px; align-items: center;
+  padding: 10px 16px; border-bottom: 1px solid var(--border);
+}
+.coupon-label { font-size: 13px; color: var(--text-secondary); min-width: 90px; }
+.coupon-input {
+  flex: 1; border: 1.5px solid var(--border); border-radius: 7px;
+  padding: 7px 10px; font-size: 13px; font-family: 'DM Sans', sans-serif;
+  color: var(--navy); outline: none; transition: border-color var(--t);
+}
+.coupon-input:focus { border-color: var(--blue); }
+.coupon-btn {
+  border: 1.5px solid var(--navy); background: transparent;
+  border-radius: 7px; padding: 7px 12px;
+  font-size: 11px; font-weight: 700; font-family: 'DM Sans', sans-serif;
+  color: var(--navy); cursor: pointer; letter-spacing: 0.05em;
+  white-space: nowrap; transition: background var(--t);
+}
+.coupon-btn:hover { background: var(--bg); }
+
+/* Proration */
+.proration-note {
+  font-size: 11px; color: var(--text-muted);
+  display: flex; align-items: center; gap: 5px;
+  padding: 0 16px 10px; line-height: 1.4;
+}
+
+/* Total */
+.total-row {
+  background: var(--navy) !important; padding: 15px 16px !important;
+}
+.total-row .row-label { font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.6); }
+.total-row .row-value {
+  font-size: 22px; font-weight: 700; color: white;
+  flex-direction: column; align-items: flex-end; gap: 2px;
+}
+.total-note { font-size: 11px; font-weight: 400; color: rgba(255,255,255,0.42); font-family: 'DM Mono', monospace; }
+
+/* Footer */
+.modal-footer {
+  display: flex; justify-content: flex-end; gap: 10px;
+  padding: 16px 24px; border-top: 1px solid var(--border);
+}
+.btn-cancel {
+  padding: 10px 20px; border: 1.5px solid var(--border); border-radius: 8px;
+  background: transparent; font-size: 12px; font-weight: 700;
+  font-family: 'DM Sans', sans-serif; color: var(--text-secondary);
+  cursor: pointer; text-transform: uppercase; letter-spacing: 0.06em;
+  transition: background var(--t);
+}
+.btn-cancel:hover { background: var(--bg); }
+.btn-proceed {
+  padding: 10px 24px; border: none; border-radius: 8px;
+  background: var(--blue); font-size: 12px; font-weight: 700;
+  font-family: 'DM Sans', sans-serif; color: white; cursor: pointer;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  transition: background var(--t), transform var(--t);
+}
+.btn-proceed:hover { background: var(--blue-hover); transform: translateY(-1px); }
+
+@keyframes numFlash {
+  0%   { color: var(--blue); }
+  100% { color: inherit; }
+}
+.flash { animation: numFlash 0.3s ease; }
+</style>
+</head>
+<body>
+
+<div class="modal">
+  <div class="modal-header">
+    <h2>Buy Seats</h2>
+    <button class="close-btn">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <div class="modal-body">
+
+    <div class="bundles" id="bundleCards"></div>
+
+    <div class="per-seat-hint">
+      <span class="per-seat-hint-left">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        Larger plans cost less per seat —&nbsp;<b id="perSeatHint"></b>
+      </span>
+      <a href="#" class="custom-plan-link" onclick="return false;">
+        Custom plan
+        <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <div class="billing-section">
+      <div class="billing-tabs">
+        <div class="tab active" data-period="monthly">One Month</div>
+        <div class="tab" data-period="6month">6-months</div>
+        <div class="tab" data-period="yearly">One Year</div>
+      </div>
+      <div class="save-badge" id="saveBadge"></div>
+    </div>
+
+    <div class="nudge-wrap" id="nudgeWrap">
+      <div class="upgrade-nudge">
+        <div class="nudge-icon">💡</div>
+        <div class="nudge-text">
+          <div class="nudge-title" id="nudgeTitle"></div>
+          <div class="nudge-desc" id="nudgeDesc"></div>
+          <div class="nudge-cta" id="nudgeCta">Switch to <span id="nudgePlan"></span> instead →</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-card">
+      <div class="summary-row">
+        <span class="row-label">Your Current Plan</span>
+        <span class="row-value" id="currentPlanLabel">—</span>
+      </div>
+
+      <div class="summary-row">
+        <span class="row-label">
+          Additional Seats
+          <span class="sublabel" id="perSeatLabel"></span>
+        </span>
+        <span class="row-value">
+          <div class="stepper">
+            <button class="stepper-btn" id="btnMinus">−</button>
+            <div class="stepper-val" id="stepperVal">0</div>
+            <button class="stepper-btn" id="btnPlus">+</button>
+          </div>
+        </span>
+      </div>
+
+      <div class="summary-row tinted">
+        <span class="row-label">New Total Seats</span>
+        <span class="row-value" id="totalSeatsVal">—</span>
+      </div>
+
+      <div class="summary-row tinted">
+        <span class="row-label">
+          Next Billing Price
+          <span class="sublabel">(from next cycle)</span>
+        </span>
+        <span class="row-value">
+          <span id="nextBillingPrice">—</span>
+          <span class="calc" id="nextBillingCalc"></span>
+          <span id="nextBillingTag"></span>
+        </span>
+      </div>
+
+      <div class="summary-row tinted">
+        <span class="row-label">Next Billing Date</span>
+        <span class="row-value">01 Mar, 2026</span>
+      </div>
+
+      <div class="coupon-row">
+        <span class="coupon-label">Coupon Code</span>
+        <input class="coupon-input" type="text" placeholder="">
+        <button class="coupon-btn">APPLY CODE</button>
+      </div>
+
+      <div class="proration-note" id="prorationNote" style="display:none">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+        <span id="prorationText"></span>
+      </div>
+
+      <div class="summary-row total-row">
+        <span class="row-label">Total for now</span>
+        <span class="row-value">
+          <span id="totalNow">$0</span>
+          <span class="total-note" id="totalNowNote">No additional seats selected</span>
+        </span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn-cancel">Cancel</button>
+    <button class="btn-proceed" id="btnProceed">Proceed</button>
+  </div>
+</div>
+
+<script>
+// ── PRICING DATA ──────────────────────────────────────────────────
+const PLANS = [
+  { id:'basic',      name:'Basic',      bundleSeats:1,   monthly:99,    per6m:504.90,   perYear:831.60   },
+  { id:'starter',    name:'Starter',    bundleSeats:5,   monthly:350,   per6m:1785,     perYear:2940     },
+  { id:'pro',        name:'Pro',        bundleSeats:20,  monthly:799,   per6m:4074.90,  perYear:6711.60  },
+  { id:'agency',     name:'Agency',     bundleSeats:50,  monthly:1499,  per6m:7644.90,  perYear:12591.60 },
+  { id:'enterprise', name:'Enterprise', bundleSeats:100, monthly:2499,  per6m:12744.90, perYear:20991.60 },
+];
+
+// Per-seat prices (monthly, 6-month, yearly)
+const PER_SEAT = {
+  monthly: [99,    70,    39.95, 29.98, 24.99],
+  '6month':[84.15, 59.50, 33.95, 25.48, 21.24],
+  yearly:  [69.30, 49,    27.96, 20.98, 17.49],
+};
+
+// STARTING STATE
+const CURRENT_PLAN_IDX = 1; // Starter
+const CURRENT_SEATS    = 7; // 5 bundle + 2 already purchased
+const PRORATE_DAYS     = 11;
+const CYCLE_DAYS       = 31;
+
+// ── APP STATE ─────────────────────────────────────────────────────
+let s = {
+  plan:          CURRENT_PLAN_IDX,
+  added:         0,
+  period:        'monthly',
+  nudgePlanIdx:  null,
+  seatsFromUpgrade: 0, // seats gained "for free" by upgrading bundle (no per-seat charge)
+};
+
+// ── HELPERS ───────────────────────────────────────────────────────
+const fmt = n => '$' + n.toLocaleString('en-US',{
+  minimumFractionDigits: n % 1 === 0 ? 0 : 2,
+  maximumFractionDigits: 2
+});
+
+const bundlePrice = (pi, period) => {
+  if (period === 'monthly') return PLANS[pi].monthly;
+  if (period === '6month')  return PLANS[pi].per6m;
+  return PLANS[pi].perYear;
+};
+
+const perSeat = (pi, period) => PER_SEAT[period][pi];
+
+const periodSuffix = p => p === 'monthly' ? '/mo' : p === '6month' ? '/6mo' : '/yr';
+
+const periodLabel = p => p === 'monthly' ? 'monthly' : p === '6month' ? '6-month' : 'yearly';
+
+// ── CALCULATION ───────────────────────────────────────────────────
+function calc() {
+  const { plan, added, period, seatsFromUpgrade } = s;
+  const ps        = perSeat(plan, period);
+  const bundle    = bundlePrice(plan, period);
+  const bundleInc = PLANS[plan].bundleSeats;
+
+  // Current plan bundle price (what user already pays)
+  const currentBundle = bundlePrice(CURRENT_PLAN_IDX, period);
+
+  // Seats gained for free by upgrading (already covered by new bundle price)
+  const freeGain = seatsFromUpgrade;
+
+  // Paid extra = seats above bundle (existing overage + any extra added beyond bundle gain)
+  const existingExtra = Math.max(0, CURRENT_SEATS - bundleInc);
+  const paidExtra     = existingExtra + Math.max(0, added - freeGain);
+
+  const totalSeats  = CURRENT_SEATS + added;
+  const nextBilling = bundle + paidExtra * ps;
+
+  // Total for now:
+  // If plan changed → prorated bundle upgrade diff + prorated any extra paid seats
+  // If same plan    → prorated extra paid seats only
+  const paidAddedSeats = Math.max(0, added - freeGain);
+  const bundleUpgradeCost = plan !== CURRENT_PLAN_IDX
+    ? Math.max(0, bundle - currentBundle) * (PRORATE_DAYS / CYCLE_DAYS)
+    : 0;
+  const extraSeatsCost = paidAddedSeats * ps * (PRORATE_DAYS / CYCLE_DAYS);
+  const totalNow = bundleUpgradeCost + extraSeatsCost;
+
+  return { ps, bundle, currentBundle, totalSeats, paidExtra, existingExtra, freeGain,
+           nextBilling, totalNow, bundleUpgradeCost, paidAddedSeats };
+}
+
+// ── FIND CHEAPER ALTERNATIVE ──────────────────────────────────────
+function findCheaper() {
+  const { plan, added, period, seatsFromUpgrade } = s;
+  const paidAdded = Math.max(0, added - seatsFromUpgrade);
+  if (paidAdded === 0) return null;
+  const c = calc();
+  let best = null;
+
+  PLANS.forEach((p, i) => {
+    if (i <= plan) return;
+    const altBundle  = bundlePrice(i, period);
+    const altPerSeat = perSeat(i, period);
+    const altExtra   = Math.max(0, c.totalSeats - p.bundleSeats);
+    const altTotal   = altBundle + altExtra * altPerSeat;
+    const saving     = c.nextBilling - altTotal;
+    if (saving > 0.5 && (!best || saving > best.saving)) {
+      best = { planIdx: i, saving, altTotal };
+    }
+  });
+  return best;
+}
+
+// ── RENDER ────────────────────────────────────────────────────────
+function render() {
+  const { plan, added, period } = s;
+  const c      = calc();
+  const cheaper = findCheaper();
+  const suf    = periodSuffix(period);
+
+  // Bundle cards
+  const container = document.getElementById('bundleCards');
+  container.innerHTML = '';
+  PLANS.forEach((p, i) => {
+    const card = document.createElement('div');
+    const isLocked = i < CURRENT_PLAN_IDX;
+    card.className = 'bundle-card' + (i === plan ? ' active' : '') + (isLocked ? ' locked' : '');
+    const price = bundlePrice(i, period);
+    const ps    = perSeat(i, period);
+    card.innerHTML = `
+      <div class="b-name">${p.name}</div>
+      <div class="b-price">${fmt(price)}</div>
+      <div class="b-seats">from ${p.bundleSeats} seat${p.bundleSeats > 1 ? 's' : ''}</div>
+    `;
+    if (!isLocked) {
+      card.addEventListener('click', () => {
+        if (i === s.plan) return;
+        s.plan = i;
+        // Pre-fill with seats gained vs current seats
+        // If bundle already covers current seats, show the gain; no extra cost
+        const gained = Math.max(0, PLANS[i].bundleSeats - CURRENT_SEATS);
+        s.added = gained;
+        s.seatsFromUpgrade = gained; // track the "free" gain so stepper min is 0 extra
+        render();
+      });
+    }
+    container.appendChild(card);
+  });
+
+  // Per-seat hint
+  document.getElementById('perSeatHint').textContent =
+    `${fmt(c.ps)}/seat on ${PLANS[plan].name}`;
+
+  // Save badge
+  const badge = document.getElementById('saveBadge');
+  if (period === 'monthly') badge.textContent = '💡 Save up to 20% with 6-months or yearly plans (paid upfront)';
+  else if (period === '6month') badge.textContent = '✅ Saving ~15% vs monthly — 6 months paid upfront';
+  else badge.textContent = '✅ Saving ~20% vs monthly — 12 months paid upfront';
+
+  // Current plan label
+  document.getElementById('currentPlanLabel').textContent =
+    `Starter — ${CURRENT_SEATS} seats, ${periodLabel(period)}`;
+
+  // Per-seat label in row
+  document.getElementById('perSeatLabel').textContent = `at ${fmt(c.ps)}/seat`;
+
+  // Stepper — min is 0 for same-plan, or seatsFromUpgrade for upgraded plan
+  const stepperMin = s.plan === CURRENT_PLAN_IDX ? 0 : s.seatsFromUpgrade;
+  document.getElementById('stepperVal').textContent = added;
+  document.getElementById('btnMinus').disabled = added <= stepperMin;
+
+  // Row label: show context-aware sublabel
+  if (s.plan > CURRENT_PLAN_IDX && s.seatsFromUpgrade > 0 && added === s.seatsFromUpgrade) {
+    document.getElementById('perSeatLabel').textContent =
+      `+${s.seatsFromUpgrade} included in ${PLANS[s.plan].name} bundle`;
+    document.getElementById('perSeatLabel').style.color = 'var(--green)';
+  } else {
+    document.getElementById('perSeatLabel').textContent =
+      added > s.seatsFromUpgrade
+        ? `${s.seatsFromUpgrade > 0 ? s.seatsFromUpgrade + ' bundled + ' : ''}${added - s.seatsFromUpgrade} extra at ${fmt(c.ps)}/seat`
+        : `+${s.seatsFromUpgrade} included in ${PLANS[s.plan].name} bundle`;
+    document.getElementById('perSeatLabel').style.color =
+      added > s.seatsFromUpgrade ? '' : 'var(--green)';
+  }
+
+  // Total seats
+  setVal('totalSeatsVal', c.totalSeats + ' seats');
+
+  // Next billing
+  setVal('nextBillingPrice', fmt(c.nextBilling) + suf);
+  document.getElementById('nextBillingCalc').textContent = c.paidExtra > 0
+    ? `= ${fmt(c.bundle)} + ${c.paidExtra}×${fmt(c.ps)}`
+    : '';
+
+  // Tag
+  const tagEl = document.getElementById('nextBillingTag');
+  const paidAdded = Math.max(0, added - s.seatsFromUpgrade);
+  if (cheaper)         tagEl.innerHTML = `<span class="tag tag-amber">Not optimal</span>`;
+  else if (paidAdded > 0) tagEl.innerHTML = `<span class="tag tag-green">Best price</span>`;
+  else                 tagEl.innerHTML = '';
+
+  // Nudge
+  const nudgeWrap = document.getElementById('nudgeWrap');
+  if (cheaper) {
+    const bp = PLANS[cheaper.planIdx];
+    document.getElementById('nudgeTitle').textContent =
+      `Save ${fmt(cheaper.saving)}${suf} by upgrading to ${bp.name}`;
+    document.getElementById('nudgeDesc').innerHTML =
+      `${paidAdded} extra seat${paidAdded!==1?'s':''} on ${PLANS[plan].name} = <strong>${fmt(c.nextBilling)}${suf}</strong>. ` +
+      `${bp.name} covers all ${c.totalSeats} seats for <strong>${fmt(cheaper.altTotal)}${suf}</strong>.`;
+    document.getElementById('nudgePlan').textContent = bp.name;
+    s.nudgePlanIdx = cheaper.planIdx;
+    nudgeWrap.classList.add('visible');
+  } else {
+    nudgeWrap.classList.remove('visible');
+    s.nudgePlanIdx = null;
+  }
+
+  // Proration
+  const proEl = document.getElementById('prorationNote');
+  const hasCharge = c.totalNow > 0;
+  if (hasCharge) {
+    proEl.style.display = 'flex';
+    let proText = '';
+    if (c.bundleUpgradeCost > 0 && c.paidAddedSeats > 0) {
+      proText = `Bundle upgrade + ${c.paidAddedSeats} extra seat${c.paidAddedSeats>1?'s':''} — both prorated for ${PRORATE_DAYS}/${CYCLE_DAYS} days`;
+    } else if (c.bundleUpgradeCost > 0) {
+      proText = `Bundle upgrade from ${fmt(c.currentBundle)} → ${fmt(c.bundle)}, prorated for ${PRORATE_DAYS}/${CYCLE_DAYS} days`;
+    } else {
+      proText = `${c.paidAddedSeats} new seat${c.paidAddedSeats>1?'s':''} × ${fmt(c.ps)} × ${PRORATE_DAYS}/${CYCLE_DAYS} days prorated`;
+    }
+    document.getElementById('prorationText').textContent = proText;
+  } else {
+    proEl.style.display = 'none';
+  }
+
+  // Total for now
+  setVal('totalNow', hasCharge ? fmt(c.totalNow) : '$0');
+  let totalNote = '';
+  if (c.bundleUpgradeCost > 0 && c.paidAddedSeats > 0) {
+    totalNote = `${fmt(c.bundleUpgradeCost)} plan upgrade + ${fmt(c.paidAddedSeats * c.ps * PRORATE_DAYS / CYCLE_DAYS)} extra seats (prorated)`;
+  } else if (c.bundleUpgradeCost > 0) {
+    totalNote = `(${fmt(c.bundle)} − ${fmt(c.currentBundle)}) × ${PRORATE_DAYS}/${CYCLE_DAYS} days prorated`;
+  } else if (c.paidAddedSeats > 0) {
+    totalNote = `${c.paidAddedSeats} seat${c.paidAddedSeats>1?'s':''} × ${fmt(c.ps)} × ${PRORATE_DAYS}/${CYCLE_DAYS} days`;
+  } else if (s.plan > CURRENT_PLAN_IDX && s.seatsFromUpgrade > 0) {
+    totalNote = `${s.seatsFromUpgrade} seats included in ${PLANS[s.plan].name} bundle — no extra charge today`;
+  } else {
+    totalNote = 'No additional seats selected';
+  }
+  document.getElementById('totalNowNote').textContent = totalNote;
+
+  // Proceed button
+  const proceedBtn = document.getElementById('btnProceed');
+  proceedBtn.textContent = cheaper ? 'Proceed anyway' : 'Proceed';
+  proceedBtn.disabled = !hasCharge;
+  proceedBtn.style.opacity = hasCharge ? '' : '0.4';
+  proceedBtn.style.cursor = hasCharge ? '' : 'not-allowed';
+  proceedBtn.style.transform = hasCharge ? '' : 'none';
+}
+
+function setVal(id, text) {
+  const el = document.getElementById(id);
+  if (el.textContent !== text) {
+    el.textContent = text;
+    el.classList.remove('flash');
+    void el.offsetWidth;
+    el.classList.add('flash');
+  }
+}
+
+// ── EVENTS ────────────────────────────────────────────────────────
+document.getElementById('btnPlus').addEventListener('click', () => { s.added++; render(); });
+document.getElementById('btnMinus').addEventListener('click', () => {
+  const min = s.plan === CURRENT_PLAN_IDX ? 0 : s.seatsFromUpgrade;
+  if (s.added > min) { s.added--; render(); }
+});
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    s.period = tab.dataset.period;
+    render();
+  });
+});
+
+document.getElementById('nudgeCta').addEventListener('click', () => {
+  if (s.nudgePlanIdx === null) return;
+  const c = calc();
+  const newPlanIdx     = s.nudgePlanIdx;
+  const newBundleSeats = PLANS[newPlanIdx].bundleSeats;
+  const gained         = Math.max(0, newBundleSeats - CURRENT_SEATS);
+  const paidExtra      = Math.max(0, c.totalSeats - newBundleSeats);
+  s.plan             = newPlanIdx;
+  s.seatsFromUpgrade = gained;
+  s.added            = gained + paidExtra;
+  render();
+});
+
+// Initial render
+render();
+</script>
+</body>
+</html>
